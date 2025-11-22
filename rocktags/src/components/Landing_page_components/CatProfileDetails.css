@@ -1,0 +1,97 @@
+.cat-details {
+  font-family: "DM Sans", sans-serif;
+}
+.p-6 {
+  padding: 1.5rem;
+}
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+.card-box {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  border: 2px solid transparent;
+}
+.card-box.orange {
+  background: #fff7ed;
+  border-color: #ffedd5;
+}
+.card-box.blue {
+  background: #eff6ff;
+  border-color: #dbeafe;
+}
+.heading {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.icon {
+  width: 1.25rem;
+}
+.icon.blue {
+  color: #0039c8;
+}
+.icon.orange {
+  color: #ff6b00;
+}
+.icon.red {
+  color: #ef4444;
+}
+.label {
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.value {
+  font-weight: 600;
+  color: #111827;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hearts {
+  display: flex;
+  gap: 0.5rem;
+}
+.heart {
+  font-size: 1.25rem;
+  color: #e5e7eb;
+}
+.heart.filled {
+  color: #ef4444;
+}
+.muted {
+  color: #4b5563;
+}
+.activity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.small {
+  font-size: 0.9rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.report-btn {
+  width: 100%;
+  background: linear-gradient(90deg, #0039c8 0%, #ff6b00 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+}

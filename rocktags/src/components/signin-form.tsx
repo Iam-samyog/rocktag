@@ -29,13 +29,17 @@ export function SignInForm() {
         return;
       }
       else {
+        // Set auth token in cookie for server-side verification
+        const token = await auth.currentUser.getIdToken();
+        document.cookie = `firebase-auth-token=${token}; path=/; secure; samesite=strict; max-age=3600`;
+        
         setMessage("Signed in successfully!");
         setEmail("");
         setPassword("");
         // Navigate to main area after successful signin
         setTimeout(() => {
           router.push("/main/map");
-        }, 100);
+        }, 1);
       }
 
     } catch (error: unknown) {

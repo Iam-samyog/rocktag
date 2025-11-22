@@ -1,9 +1,6 @@
-"use client"
-
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { ArrowRight } from "lucide-react"
-import {Slottable} from "@radix-ui/react-slot"
 import Link from "next/link"
 
 export function HeroSection() {

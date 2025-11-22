@@ -1,5 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
+import { ConditionalSignOutButton } from "@/components/ui/conditional-sign-out-button"
 
 export function Navigation() {
   return (
@@ -38,6 +39,7 @@ export function Navigation() {
             >
               ACM
             </Link>
+            <ConditionalSignOutButton />
           </div>
         </div>
       </div>

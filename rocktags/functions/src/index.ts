@@ -1,16 +1,7 @@
-// import {setGlobalOptions} from "firebase-functions";
-// import {onRequest} from "firebase-functions/https";
-// import * as logger from "firebase-functions/logger";
-
 import { beforeUserCreated, HttpsError } from "firebase-functions/v2/identity";
 import * as functions from 'firebase-functions/v1';
-import {getFirestore} from 'firebase-admin/firestore';
-import { initializeApp } from "firebase-admin/app";
 import 'firebase-functions/logger/compat';
-
-// Initialize Admin SDK and Firestore
-const firebaseApp = initializeApp();
-export const db = getFirestore(firebaseApp, 'mainstore');
+import { admin_auth, admin_db } from "./firebase-admin";
 
 export const enforceMavsEmail = beforeUserCreated(async (event) => {
   const user = event.data;
@@ -23,23 +14,17 @@ export const enforceMavsEmail = beforeUserCreated(async (event) => {
 });
 
 export const createFirestoreUser = functions.auth.user().onCreate(async (user) => {
-    // The user object is the same UserRecord you'd get from the Admin SDK
-    const { uid, email, displayName } = user;
-    
-    // Data to write to Firestore
+  try {
+    const uid = user.uid;
+    await admin_auth.setCustomUserClaims(uid, { user: true });
+
     const userData = {
-        displayName: displayName || 'New User',
         role: 'user',
     };
 
-    // Use the Auth UID as the document ID for the user profile
-    await db.collection('users').doc(email!).set(userData)
-    .then(() => {
-        console.log("[V1]Document successfully written!");
-    })
-    .catch((error) => {
-        console.error("[V1] Error writing document: ", error);
-    });
-
+    await admin_db.collection('users').doc(user.email!).set(userData)
     console.log(`[V1] Creating user profile for UID: ${uid}`);
+  } catch (err) {
+    console.error(err);
+  }
 });

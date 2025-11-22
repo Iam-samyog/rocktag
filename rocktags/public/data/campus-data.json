@@ -1,0 +1,130 @@
+{
+  "cats": [
+    {
+      "id": 1,
+      "name": "Microwave",
+      "lat": 32.7315,
+      "lng": -97.11,
+      "color": "Orange Tabby",
+      "personality": "Friendly",
+      "activity": "Lounging",
+      "age": 3,
+      "friendliness": 5,
+      "favSpot": "UC",
+      "bio": "Famous campus cat, loves chin scratches and sunbathing.",
+      "sightings": 156,
+      "bestTime": "Noon",
+      "profileImage": "/image/catimage.jpg",
+      "gallery": [
+        "/image/catimage.jpg",
+        "/image/catimage.jpg",
+        "/image/catimage.jpg",
+        "/image/catimage.jpg"
+      ],
+      "favoriteRubbingPlace": "Under the chin",
+      "traits": ["Sun-lover", "Treat-motivated", "Social"]
+    },
+    {
+      "id": 2,
+      "name": "Professor Whiskers",
+      "lat": 32.7312,
+      "lng": -97.1147,
+      "color": "Gray",
+      "personality": "Wise",
+      "activity": "Sitting on steps",
+      "age": 7,
+      "friendliness": 3,
+      "favSpot": "Library",
+      "bio": "Ancient sage of the library. Reads minds.",
+      "sightings": 89,
+      "bestTime": "Morning",
+      "profileImage": "",
+      "gallery": [
+        "",
+        ""
+      ],
+      "favoriteRubbingPlace": "Behind the ears",
+      "traits": ["Philosopher", "Quiet", "Observer"]
+    },
+    {
+      "id": 3,
+      "name": "Sushi",
+      "lat": 32.7320,
+      "lng": -97.1120,
+      "color": "Calico",
+      "personality": "Playful",
+      "activity": "Chasing leaves",
+      "age": 2,
+      "friendliness": 5,
+      "favSpot": "Engineering Quad",
+      "bio": "Loves laser pointers and engineering students.",
+      "sightings": 201,
+      "bestTime": "Afternoon",
+      "profileImage": "",
+      "gallery": [
+        "",
+        "",
+        ""
+      ],
+      "favoriteRubbingPlace": "Belly (when in the mood)",
+      "traits": ["Energetic", "Curious", "Laser-addict"]
+    },
+    {
+      "id": 4,
+      "name": "Mocha",
+      "lat": 32.7308,
+      "lng": -97.1105,
+      "color": "Tuxedo",
+      "personality": "Elegant",
+      "activity": "Posing for photos",
+      "age": 4,
+      "friendliness": 4,
+      "favSpot": "Student Center",
+      "bio": "Campus supermodel. Always camera-ready.",
+      "sightings": 134,
+      "bestTime": "Evening",
+      "profileImage": "",
+      "gallery": [
+        "",
+        ""
+      ],
+      "favoriteRubbingPlace": "Along the spine",
+      "traits": ["Photogenic", "Graceful", "Affectionate"]
+    },
+    {
+      "id": 5,
+      "name": "Noodle",
+      "lat": 32.7351,
+      "lng": -97.1202,
+      "color": "White",
+      "personality": "Lazy",
+      "activity": "Napping in grass",
+      "age": 5,
+      "friendliness": 4,
+      "favSpot": "Maverick Stadium",
+      "bio": "Sleeps 22 hours a day. Professional napper.",
+      "sightings": 98,
+      "bestTime": "All day",
+      "profileImage": "",
+      "gallery": [
+        "",
+        "",
+        ""
+      ],
+      "favoriteRubbingPlace": "Cheeks",
+      "traits": ["Sleepyhead", "Cuddly", "Low-energy"]
+    }
+  ],
+  "buildings": [
+    { "name": "E.H. Hereford University Center", "abbr": "UC", "lat": 32.7315, "lng": -97.11, "priority": 1 },
+    { "name": "Central Library", "abbr": "LIBR", "lat": 32.7312, "lng": -97.1147, "priority": 1 },
+    { "name": "Maverick Stadium", "abbr": "STAD", "lat": 32.7351, "lng": -97.1202, "priority": 1 },
+    { "name": "Engineering Research Building", "abbr": "ERB", "lat": 32.7320, "lng": -97.1120, "priority": 1 },
+    { "name": "Science Hall", "abbr": "SH", "lat": 32.7310, "lng": -97.1118, "priority": 2 },
+    { "name": "College of Business", "abbr": "COB", "lat": 32.7305, "lng": -97.1130, "priority": 1 },
+    { "name": "College of Nursing", "abbr": "CONHI", "lat": 32.7298, "lng": -97.1150, "priority": 2 },
+    { "name": "Fine Arts Building", "abbr": "FAB", "lat": 32.7325, "lng": -97.1100, "priority": 1 },
+    { "name": "Architecture Building", "abbr": "ARCH", "lat": 32.7330, "lng": -97.1135, "priority": 2 },
+    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.7340, "lng": -97.1090, "priority": 1 }
+  ]
+}
