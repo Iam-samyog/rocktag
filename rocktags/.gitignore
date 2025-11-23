@@ -48,6 +48,3 @@ firebase-debug.*.log
 *.log
 *.log.*
 *.log.*.*
-
-# admin sdk
-serviceAccount.json

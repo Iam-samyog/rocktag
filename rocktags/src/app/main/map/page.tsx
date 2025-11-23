@@ -1,37 +1,70 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
+import { useState, useRef } from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  InfoWindow,
+} from "@react-google-maps/api";
+import type { Cat, Building, LatLng, MapOptionsShape } from "./types";
+import type { LoadScriptProps } from "@react-google-maps/api";
 
-<<<<<<< HEAD
 // Custom map style with UTA colors
 const mapStyles = [
-=======
-import type { Cat, Building } from "@/types";
-import { Navbar } from "@/app/components/Landing_page_components/Navbar";
-import { Footer } from "@/app/components/Landing_page_components/Footer";
-
-// Correct path: component lives in src/components/
-const MapWithEverything = dynamic(
-  () => import("@/app/components/MapWithCatsAndBuildings"),
->>>>>>> upstream/main
   {
-    ssr: false,
-    loading: () => (
-      <div className="h-[72vh] flex items-center justify-center bg-gray-50 rounded-xl">
-        <div className="animate-spin h-12 w-12 border-4 border-[#E2C3A7] rounded-full border-t-transparent"></div>
-      </div>
-    ),
-  }
-);
+    featureType: "poi",
+    elementType: "labels",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "transit",
+    elementType: "labels",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.icon",
+    stylers: [{ visibility: "off" }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#a8e6cf" }],
+  },
+  {
+    featureType: "landscape",
+    elementType: "geometry",
+    stylers: [{ color: "#dcedc1" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: "#ffffff" }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: "#e0e0e0" }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: "#84d2f6" }],
+  },
+  {
+    featureType: "poi.school",
+    elementType: "geometry.fill",
+    stylers: [{ color: "#ffd3b6" }],
+  },
+];
 
-export default function MapPage() {
-  const [data, setData] = useState<{ cats: Cat[]; buildings: Building[] }>({
-    cats: [],
-    buildings: [],
-  });
+// Cat icon using UTA ORANGE gradient
+const catIcon = {
+  url: "data:image/svg+xml;utf8,<svg width='48' height='48' viewBox='0 0 48 48' fill='none' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='catGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23ff6b00;stop-opacity:1' /><stop offset='100%25' style='stop-color:%23e55d00;stop-opacity:1' /></linearGradient><filter id='shadow'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-opacity='0.3'/></filter></defs><circle cx='24' cy='24' r='20' fill='url(%23catGrad)' stroke='%23ffffff' stroke-width='3' filter='url(%23shadow)'/><ellipse cx='17' cy='22' rx='3' ry='4' fill='%23ffffff'/><ellipse cx='31' cy='22' rx='3' ry='4' fill='%23ffffff'/><circle cx='17' cy='22' r='1.5' fill='%23333333'/><circle cx='31' cy='22' r='1.5' fill='%23333333'/><path d='M18 30c2 3 10 3 12 0' stroke='%23ffffff' stroke-width='2.5' stroke-linecap='round'/><path d='M10 14l6 6M38 14l-6 6' stroke='%23ff6b00' stroke-width='3' stroke-linecap='round' filter='url(%23shadow)'/><circle cx='24' cy='28' r='1.5' fill='%23ff4757'/></svg>",
+  scaledSize: { width: 48, height: 48 },
+};
 
-<<<<<<< HEAD
 // Building icon using UTA BLUE gradient
 const buildingIcon = {
   url: "data:image/svg+xml;utf8,<svg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='buildGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'><stop offset='0%25' style='stop-color:%230039c8;stop-opacity:1' /><stop offset='100%25' style='stop-color:%232a3fd7;stop-opacity:1' /></linearGradient><filter id='bldgShadow'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-opacity='0.4'/></filter></defs><rect x='8' y='10' width='24' height='26' rx='2' fill='url(%23buildGrad)' stroke='%23ffffff' stroke-width='2.5' filter='url(%23bldgShadow)'/><rect x='13' y='15' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='13' y='21' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='13' y='27' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='23' y='15' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='23' y='21' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='18' y='28' width='4' height='8' rx='1' fill='%23ff6348'/><circle cx='20' cy='7' r='3' fill='%23ffd32a' stroke='%23ffffff' stroke-width='1.5'/></svg>",
@@ -427,37 +460,215 @@ export default function Home(): React.ReactElement {
     zoomControl: true,
     gestureHandling: "greedy",
   };
-=======
-  // Fetch JSON from public folder
- useEffect(() => {
-  fetch("/data/campus-data.json")  // This works because file is in public/data/
-    .then((res) => {
-      if (!res.ok) throw new Error("Not found");
-      return res.json();
-    })
-    .then(setData)
-    .catch((err) => console.error("Failed to load campus data:", err));
-}, []);
->>>>>>> upstream/main
 
   return (
-    <div className="min-h-screen bg-[#FFFCF4] flex flex-col">
-      
-      <div className="mb-[80px] font-poppins text-white">
-    <Navbar />
-      </div>
-      
+    <div className="min-h-screen bg-blue-50">
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      />
 
-      <main className="flex-1 container mx-auto px-6 py-8 ">
-        <div className="bg-white rounded-2xl shadow-lg p-6">
-          <div className="h-[72vh] rounded-xl overflow-hidden border-2 border-[#E2C3A7]/20">
-            {/* Pass data to map */}
-            <MapWithEverything cats={data.cats} buildings={data.buildings} />
+      <header className="relative bg-gradient-to-r from-[#0039c8] to-[#ff6b00] shadow-2xl">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative container mx-auto px-6 py-8">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            <div className="text-center flex-1">
+              <h1 className="text-5xl font-black text-white mb-2 tracking-tight drop-shadow-lg">
+                CatMap <span className="text-yellow-300">@</span> UTA
+              </h1>
+              <p className="text-white text-lg font-medium tracking-wide flex items-center justify-center gap-2">
+                <i className="fas fa-paw"></i>
+                Track Your Feline Friends on Campus
+                <i className="fas fa-paw"></i>
+              </p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div
+                className="bg-white rounded-full p-3 shadow-lg animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              >
+                <i className="fas fa-heart text-4xl text-red-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-[#ff6b00] transform hover:scale-105 transition-transform">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
+                  Campus Cats 🐾
+                </p>
+                <p className="text-4xl font-black text-[#ff6b00] mt-1">
+                  {campusCats.length}
+                </p>
+              </div>
+              <div className="bg-orange-100 rounded-full p-4">
+                <i className="fas fa-cat text-3xl text-[#ff6b00]"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-[#0039c8] transform hover:scale-105 transition-transform">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
+                  Campus Buildings 🏛️
+                </p>
+                <p className="text-4xl font-black text-[#0039c8] mt-1">
+                  {visibleBuildings.length}/{allBuildings.length}
+                </p>
+              </div>
+              <div className="bg-blue-100 rounded-full p-4">
+                <i className="fas fa-building text-3xl text-[#0039c8]"></i>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-xl p-6 border-l-4 border-[#ff6b00] transform hover:scale-105 transition-transform">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-500 text-sm font-semibold uppercase tracking-wide">
+                  Total Sightings 👀
+                </p>
+                <p className="text-4xl font-black text-[#ff6b00] mt-1">
+                  {campusCats.reduce((sum, cat) => sum + cat.sightings, 0)}
+                </p>
+              </div>
+              <div className="bg-orange-100 rounded-full p-4">
+                <i className="fas fa-eye text-3xl text-[#ff6b00]"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-2xl p-6 border-4 border-white">
+          <div className="relative h-[70vh] rounded-2xl overflow-hidden shadow-inner">
+            <LoadScript
+              googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}
+              libraries={libraries}
+            >
+              <GoogleMap
+                mapContainerStyle={mapContainerStyle}
+                center={center}
+                zoom={defaultZoom}
+                options={mapOptions as any}
+                onZoomChanged={() => {
+                  if (window.google && window.google.maps) {
+                    const map = document.querySelector(".gm-style")
+                      ?.parentElement as any;
+                    if (map) {
+                      setTimeout(() => {
+                        const mapInstance = map.__gm;
+                        if (mapInstance) {
+                          setCurrentZoom(Math.round(mapInstance.zoom || 16));
+                        }
+                      }, 100);
+                    }
+                  }
+                }}
+              >
+                {visibleBuildings.map((building, idx) => (
+                  <Marker
+                    key={`building-${building.abbr}`}
+                    position={{ lat: building.lat, lng: building.lng }}
+                    icon={buildingIcon as any}
+                    onClick={() => setActiveBuildingIndex(idx)}
+                    title={building.name}
+                    label={
+                      currentZoom >= 17
+                        ? {
+                            text: building.abbr,
+                            color: "#ffffff",
+                            fontSize: "10px",
+                            fontWeight: "bold",
+                          }
+                        : undefined
+                    }
+                  >
+                    {activeBuildingIndex === idx && (
+                      <InfoWindow
+                        position={{
+                          lat: building.lat + 0.0004,
+                          lng: building.lng,
+                        }}
+                        onCloseClick={() => setActiveBuildingIndex(null)}
+                      >
+                        <div className="p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <i className="fas fa-building text-[#0039c8] text-lg"></i>
+                            <div className="font-bold text-[#0039c8] text-base">
+                              {building.name}
+                            </div>
+                          </div>
+                          <div className="text-gray-600 text-sm flex items-center gap-1">
+                            <i className="fas fa-map-marker-alt text-gray-400"></i>
+                            <span>{building.abbr} • UTA Campus</span>
+                          </div>
+                        </div>
+                      </InfoWindow>
+                    )}
+                  </Marker>
+                ))}
+
+                {campusCats.map((cat, idx) => (
+                  <Marker
+                    key={`cat-${cat.id}`}
+                    position={{ lat: cat.lat, lng: cat.lng }}
+                    icon={catIcon as any}
+                    onClick={() => {
+                      setActiveCatIndex(idx);
+                      setSelectedCatProfile(cat);
+                      setSidebarOpen(true);
+                    }}
+                    animation={
+                      activeCatIndex === idx
+                        ? (window.google as any)?.maps?.Animation?.BOUNCE
+                        : null
+                    }
+                    label={{
+                      text: cat.name,
+                      color: "#ffffff",
+                      fontSize: "11px",
+                      fontWeight: "bold",
+                      className: "cat-label",
+                    }}
+                  >
+                    {activeCatIndex === idx && !sidebarOpen && (
+                      <InfoWindow
+                        position={{ lat: cat.lat + 0.0004, lng: cat.lng }}
+                        onCloseClick={() => setActiveCatIndex(null)}
+                      >
+                        <div className="p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            <i className="fas fa-cat text-[#ff6b00] text-lg"></i>
+                            <div className="font-bold text-[#ff6b00] text-base">
+                              {cat.name}
+                            </div>
+                          </div>
+                          <div className="text-gray-700 text-sm mb-1">
+                            {cat.color}
+                          </div>
+                          <div className="text-gray-600 text-xs italic">
+                            {cat.activity}
+                          </div>
+                          <div className="mt-2 text-xs text-[#ff6b00] font-semibold">
+                            Click for full profile →
+                          </div>
+                        </div>
+                      </InfoWindow>
+                    )}
+                  </Marker>
+                ))}
+              </GoogleMap>
+            </LoadScript>
           </div>
         </div>
       </main>
 
-<<<<<<< HEAD
       {/* Centered Sidebar for Cat Profile */}
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
@@ -491,12 +702,20 @@ export default function Home(): React.ReactElement {
             />
           </div>
         </div>
-=======
- <div className="mt-[40px] text-white">
-    <Footer />
->>>>>>> upstream/main
       </div>
-     
+
+      <footer className="bg-gradient-to-r from-[#0039c8] to-[#ff6b00] text-white py-6 mt-12">
+        <div className="container mx-auto text-center">
+          <p className="flex items-center justify-center gap-2 text-lg">
+            Made with <i className="fas fa-heart text-red-500"></i> for UTA Cat
+            Lovers
+          </p>
+          <p className="text-blue-100 text-sm mt-2">
+            <i className="fas fa-paw"></i> Catify Your Campus{" "}
+            <i className="fas fa-paw"></i>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }

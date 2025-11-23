@@ -13,28 +13,17 @@
 .card {
   max-width: 650px;
   margin: auto;
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   overflow: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none; /* IE and Edge */
   position: relative;
   z-index: 1;
-========
-
-  overflow-y: auto;
-  scrollbar-width: none;
-  position: relative;
-  z-index: 1;
-  overflow-x: hidden;
-
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
   background-color: rgba(255, 255, 255, 1);
   display: flex;
   transition: 0.3s;
   flex-direction: column;
   border-radius: 10px;
   box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   height: auto;
 }
 
@@ -42,29 +31,17 @@
   width: 0;
   height: 0;
   display: none;
-========
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 
 /* Explicit border-card variant requested by user (keeps card appearance when outer wrapper removed) */
 .border-card {
   max-width: 650px;
   margin: auto;
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   overflow: hidden;
   scrollbar-width: none;
   -ms-overflow-style: none; /* IE and Edge */
   position: relative;
   z-index: 1;
-========
-
-  overflow-y: auto;
-
-  scrollbar-width: none;
-  position: relative;
-  z-index: 1;
-  overflow-x: hidden;
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
   background-color: rgba(255, 255, 255, 1);
   display: flex;
   transition: 0.3s;
@@ -72,7 +49,6 @@
   border-radius: 10px;
   /* User-requested white halo ring */
   box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   height: auto;
 }
 
@@ -106,26 +82,19 @@
   width: 0;
   height: 0;
   display: none;
-========
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 
 /* Card state dimensions */
 .card[data-state="#about"] {
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   height: auto;
   min-height: 450px;
   max-height: 600px;
-========
-  height: 700px;
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 .card[data-state="#about"] .card-main {
   padding-top: 0;
 }
 
 .card[data-state="#rubplace"] {
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   height: auto;
   min-height: 400px;
   max-height: 500px;
@@ -135,13 +104,6 @@
   height: auto;
   min-height: 450px;
   max-height: 600px;
-========
-  height: 430px;
-}
-
-.card[data-state="#demand"] {
-  height: 550px;
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 
 /* Minimized Header/Active card state styles (UN-NESTED & GAP FIXED) */
@@ -252,19 +214,11 @@
   position: relative;
   flex: 1;
   display: flex;
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   padding-top: 15px;
   flex-direction: column;
   overflow: hidden;
   /* CRITICAL: Add padding to clear the fixed menu bar */
   padding-bottom: 65px;
-========
-  padding-top: 10px;
-  flex-direction: column;
-
-  /* CRITICAL: Add padding to clear the fixed menu bar */
-  padding-bottom: 55px;
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 
 .card-subtitle {
@@ -274,11 +228,7 @@
 }
 
 .card-content {
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
   padding: 20px 25px;
-========
-  padding: 20px;
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 }
 
 .card-desc {
@@ -356,11 +306,7 @@
   }
 }
 
-<<<<<<<< HEAD:rocktags/src/components/ProfileCard.css
 /* Timeline/Demand (RECOMMENDED SNACKS) styles */
-========
-/* Timeline/Demand (DEMAND SNACKS) styles */
->>>>>>>> upstream/main:rocktags/src/components/Landing_page_components/ProfileCard.css
 .card-timeline {
   margin-top: 30px;
   position: relative;

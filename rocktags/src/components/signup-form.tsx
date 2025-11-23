@@ -1,61 +1,52 @@
 "use client";
 
 import { useState } from "react";
-import { signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "@/config/firebase";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-export function SignInForm() {
+export function SignUpForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const router = useRouter();
 
-  const handleSignin = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage("Password must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
     setMessage("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
 
-      if(!auth.currentUser?.emailVerified) {
-        setMessage("Email not verified. Please check your inbox for a verification email.");
-        await signOut(auth);
-        return;
-      }
-      else {
-        setMessage("Signed in successfully!");
-        setEmail("");
-        setPassword("");
-        // Navigate to main area after successful signin
-        setTimeout(() => {
-          router.push("/main/map");
-        }, 100);
-      }
+      const auth = getAuth();
 
+      // Create user account (this automatically signs them in)
+      await createUserWithEmailAndPassword(auth, email, password);
+      
+      // Send verification email
+      await sendEmailVerification(auth.currentUser!);
+            
+      setMessage("Account created successfully! Check your email for verification, then sign in.");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      
     } catch (error: unknown) {
-      setMessage(error instanceof Error ? error.message : "An error occurred during sign in");
+      setMessage(error instanceof Error ? error.message : "An error occurred during signup");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleResetPassword = async () => {
-    if (!email) {
-      setMessage("Please enter your email address first");
-      return;
-    }
-
-    try {
-      await sendPasswordResetEmail(auth, email);
-      setMessage("Password reset email sent! Check your inbox.");
-    } catch (error: unknown) {
-      setMessage(error instanceof Error ? error.message : "Failed to send reset email");
     }
   };
 
@@ -64,14 +55,14 @@ export function SignInForm() {
       <div className="w-full max-w-md bg-background/40 backdrop-blur-xl border border-border/50 shadow-2xl rounded-2xl p-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-foreground mb-2">
-            Welcome Back
+            Join the Community
           </h2>
           <p className="text-muted-foreground">
-            Sign in to your account
+            Create your account to get started
           </p>
         </div>
 
-        <form onSubmit={handleSignin} className="space-y-6">
+        <form onSubmit={handleSignup} className="space-y-6">
           <div className="space-y-4">
             <div>
               <input
@@ -93,13 +84,25 @@ export function SignInForm() {
                 required
               />
             </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border border-border bg-background/50 backdrop-blur-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                required
+              />
+            </div>
           </div>
 
           {message && (
             <div className={`text-center text-sm ${
-              message.includes("successfully") ? "text-green-600" : "text-red-600"
+              message.includes("successfully") || message.includes("verification") ? "text-green-600" : "text-red-600"
             }`}>
-              {message}
+              {message.includes("mavs") 
+                ? "Please use a @mavs.uta.edu email." 
+                : message}
             </div>
           )}
 
@@ -108,25 +111,8 @@ export function SignInForm() {
             disabled={loading}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
           >
-            {loading ? "Signing In..." : "Sign In"}
+            {loading ? "Creating Account..." : "Sign Up"}
           </Button>
-
-          <div className="text-center">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleResetPassword}
-              className="text-sm text-muted-foreground hover:text-foreground"
-            >
-              Forgot Password?
-            </Button>
-          </div>
-
-          <div className="text-center pt-4">
-            <Button asChild variant="outline" className="border-border hover:bg-accent/50">
-              <Link href="/">Back to Home</Link>
-            </Button>
-          </div>
         </form>
       </div>
     </div>
