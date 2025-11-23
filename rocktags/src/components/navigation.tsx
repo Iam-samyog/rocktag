@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import Link from "next/link"
 import Image from "next/image"
+=======
+import Link from "next/link";
+import Image from "next/image";
+import { ConditionalSignOutButton } from "@/components/ui/conditional-sign-out-button";
+>>>>>>> a859d33 (Admin Dashboard)
 
 export function Navigation() {
   return (
@@ -38,9 +44,19 @@ export function Navigation() {
             >
               ACM
             </Link>
+<<<<<<< HEAD
+=======
+            <Link
+              href="/admin"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Admin Dashboard
+            </Link>
+            <ConditionalSignOutButton />
+>>>>>>> a859d33 (Admin Dashboard)
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }

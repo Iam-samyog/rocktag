@@ -10,8 +10,18 @@ import {
 import type { Cat, Building, LatLng, MapOptionsShape } from "./types";
 import type { LoadScriptProps } from "@react-google-maps/api";
 
+<<<<<<< HEAD
 // Custom map style with UTA colors
 const mapStyles = [
+=======
+import type { Cat, Building } from "@/types";
+import { Navbar } from "@/app/components/Landing_page_components/Navbar";
+import { Footer } from "@/app/components/Landing_page_components/Footer";
+
+// Correct path: component lives in src/components/
+const MapWithEverything = dynamic(
+  () => import("@/app/components/MapWithCatsAndBuildings"),
+>>>>>>> a859d33 (Admin Dashboard)
   {
     featureType: "poi",
     elementType: "labels",
@@ -65,6 +75,7 @@ const catIcon = {
   scaledSize: { width: 48, height: 48 },
 };
 
+<<<<<<< HEAD
 // Building icon using UTA BLUE gradient
 const buildingIcon = {
   url: "data:image/svg+xml;utf8,<svg width='40' height='40' viewBox='0 0 40 40' fill='none' xmlns='http://www.w3.org/2000/svg'><defs><linearGradient id='buildGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'><stop offset='0%25' style='stop-color:%230039c8;stop-opacity:1' /><stop offset='100%25' style='stop-color:%232a3fd7;stop-opacity:1' /></linearGradient><filter id='bldgShadow'><feDropShadow dx='0' dy='2' stdDeviation='2' flood-opacity='0.4'/></filter></defs><rect x='8' y='10' width='24' height='26' rx='2' fill='url(%23buildGrad)' stroke='%23ffffff' stroke-width='2.5' filter='url(%23bldgShadow)'/><rect x='13' y='15' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='13' y='21' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='13' y='27' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='23' y='15' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='23' y='21' width='4' height='4' rx='1' fill='%23ffd32a'/><rect x='18' y='28' width='4' height='8' rx='1' fill='%23ff6348'/><circle cx='20' cy='7' r='3' fill='%23ffd32a' stroke='%23ffffff' stroke-width='1.5'/></svg>",
@@ -460,6 +471,18 @@ export default function Home(): React.ReactElement {
     zoomControl: true,
     gestureHandling: "greedy",
   };
+=======
+  // Fetch JSON from public folder
+ useEffect(() => {
+  fetch("/data/campus-data.json")  // This works because file is in public/data/
+    .then((res) => {
+      if (!res.ok) throw new Error("Not found");
+      return res.json();
+    })
+    .then(setData)
+    .catch((err) => console.error("Failed to load campus data:", err));
+}, []);
+>>>>>>> a859d33 (Admin Dashboard)
 
   return (
     <div className="min-h-screen bg-blue-50">
@@ -669,6 +692,7 @@ export default function Home(): React.ReactElement {
         </div>
       </main>
 
+<<<<<<< HEAD
       {/* Centered Sidebar for Cat Profile */}
       <div
         className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
@@ -702,6 +726,10 @@ export default function Home(): React.ReactElement {
             />
           </div>
         </div>
+=======
+ <div className="mt-[40px] text-white">
+    <Footer />
+>>>>>>> a859d33 (Admin Dashboard)
       </div>
 
       <footer className="bg-gradient-to-r from-[#0039c8] to-[#ff6b00] text-white py-6 mt-12">

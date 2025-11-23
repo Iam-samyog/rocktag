@@ -48,3 +48,8 @@ firebase-debug.*.log
 *.log
 *.log.*
 *.log.*.*
+<<<<<<< HEAD
+=======
+
+rocktags-testing-firebase-adminsdk-fbsvc-e48f186959.json
+>>>>>>> a859d33 (Admin Dashboard)
