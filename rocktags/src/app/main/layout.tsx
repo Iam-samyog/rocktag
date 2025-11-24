@@ -40,7 +40,7 @@ export default function DashboardLayout({
       <div>
         {/* Include shared UI here e.g. a header or sidebar */}
         {/* <NavBar /> */}
-        <div className="mt-20">{children}</div>
+        <div className="">{children}</div>
       </div>
     );
   }

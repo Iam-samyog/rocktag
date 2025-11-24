@@ -1,13 +1,12 @@
-<<<<<<< HEAD
-import Link from "next/link"
-import Image from "next/image"
-=======
 import Link from "next/link";
 import Image from "next/image";
 import { ConditionalSignOutButton } from "@/components/ui/conditional-sign-out-button";
->>>>>>> a859d33 (Admin Dashboard)
+import { cookies } from "next/headers";
 
-export function Navigation() {
+export async function Navigation() {
+  const cookieStore = await cookies();
+  const authToken = cookieStore.get("firebase-auth-token")?.value;
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
       <div className="container mx-auto px-6 py-4">
@@ -44,16 +43,15 @@ export function Navigation() {
             >
               ACM
             </Link>
-<<<<<<< HEAD
-=======
-            <Link
-              href="/admin"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Admin Dashboard
-            </Link>
+            {authToken && (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Admin Dashboard
+              </Link>
+            )}
             <ConditionalSignOutButton />
->>>>>>> a859d33 (Admin Dashboard)
           </div>
         </div>
       </div>

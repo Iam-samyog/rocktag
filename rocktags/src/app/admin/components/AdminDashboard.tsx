@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { auth } from "@/config/firebase";
 import "./admin-dashboard.css";
 
 interface User {
@@ -25,7 +26,8 @@ export function AdminDashboard() {
   const [bannedUsers, setBannedUsers] = useState<User[]>([]);
   const [cats, setCats] = useState<Cat[]>([]);
   const [loading, setLoading] = useState(false);
-  const [activeView, setActiveView] = useState<string>("dashboard");
+  const [activeView, setActiveView] = useState<string>("users");
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
   const [editedCatData, setEditedCatData] = useState<Cat | null>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -34,6 +36,8 @@ export function AdminDashboard() {
     left: number;
   } | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [currentUserDisplayName, setCurrentUserDisplayName] =
+    useState<string>("Admin");
 
   // Fetch users from API
   const fetchUsers = async () => {
@@ -159,6 +163,66 @@ export function AdminDashboard() {
     }
   };
 
+  const handleBanUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to ban this user?")) return;
+
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ banned: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to ban user");
+      }
+
+      // Move user from users to bannedUsers in local state
+      const bannedUser = users.find((user) => user.id === userId);
+      if (bannedUser) {
+        setUsers(users.filter((user) => user.id !== userId));
+        setBannedUsers([...bannedUsers, { ...bannedUser, banned: true }]);
+      }
+      setOpenMenuId(null);
+      console.log("✅ User banned successfully");
+    } catch (error) {
+      console.error("❌ Error banning user:", error);
+      alert("Failed to ban user. Please try again.");
+    }
+  };
+
+  const handleUnbanUser = async (userId: string) => {
+    if (!confirm("Are you sure you want to unban this user?")) return;
+
+    try {
+      const response = await fetch(`/api/banned/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ banned: false }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to unban user");
+      }
+
+      // Move user from bannedUsers back to users in local state
+      const unbannedUser = bannedUsers.find((user) => user.id === userId);
+      if (unbannedUser) {
+        setBannedUsers(bannedUsers.filter((user) => user.id !== userId));
+        setUsers([...users, { ...unbannedUser, banned: false }]);
+      }
+      setOpenMenuId(null);
+      console.log("✅ User unbanned successfully");
+    } catch (error) {
+      console.error("❌ Error unbanning user:", error);
+      alert("Failed to unban user. Please try again.");
+    }
+  };
+
   const toggleMenu = (
     catId: string,
     event: React.MouseEvent<HTMLButtonElement>
@@ -186,6 +250,38 @@ export function AdminDashboard() {
     // Redirect to home page
     window.location.href = "/";
   };
+
+  // Load users on initial mount
+  useEffect(() => {
+    if (isInitialLoad) {
+      setActiveView("users");
+      fetchUsers();
+      setIsInitialLoad(false);
+    }
+  }, [isInitialLoad]);
+
+  // Get current user's display name
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user && user.email) {
+        try {
+          const response = await fetch("/api/users");
+          if (response.ok) {
+            const usersData = await response.json();
+            const currentUser = usersData.find(
+              (u: User) => u.email === user.email && u.role === "Admin"
+            );
+            if (currentUser && currentUser.displayName) {
+              setCurrentUserDisplayName(currentUser.displayName);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching current user:", error);
+        }
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -446,34 +542,11 @@ export function AdminDashboard() {
             strokeWidth="2"
           />
         </symbol>
-        <symbol id="dnd" viewBox="0 0 16 16">
-          <circle
-            cx="8"
-            cy="8"
-            r="6"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M8 3.5a4.5 4.5 0 0 1 4.5 4.5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
-          <circle cx="8" cy="8" r="1.5" fill="currentColor" />
-          <path
-            d="M5 5l6 6"
-            stroke="currentColor"
-            strokeWidth="1"
-            opacity="0.7"
-          />
-        </symbol>
       </svg>
 
       <header className="page-header">
         <nav>
-          <a href="#0" aria-label="CatUTA logo" className="logo">
+          <a href="/main/map" aria-label="CatUTA logo" className="logo">
             <svg width="140" height="49">
               <use xlinkHref="#logo"></use>
             </svg>
@@ -490,14 +563,6 @@ export function AdminDashboard() {
           <ul className="admin-menu">
             <li className="menu-heading">
               <h3>Admin</h3>
-            </li>
-            <li>
-              <a href="#0">
-                <svg>
-                  <use xlinkHref="#dnd"></use>
-                </svg>
-                <span>DND</span>
-              </a>
             </li>
             <li>
               <a
@@ -530,14 +595,6 @@ export function AdminDashboard() {
               </a>
             </li>
             <li>
-              <a href="#0">
-                <svg>
-                  <use xlinkHref="#edit"></use>
-                </svg>
-                <span>Update Cat</span>
-              </a>
-            </li>
-            <li>
               <a
                 href="#0"
                 onClick={(e) => {
@@ -550,25 +607,6 @@ export function AdminDashboard() {
                   <use xlinkHref="#ban"></use>
                 </svg>
                 <span>Banned Users</span>
-              </a>
-            </li>
-            <li className="menu-heading">
-              <h3>Settings</h3>
-            </li>
-            <li>
-              <a href="#0">
-                <svg>
-                  <use xlinkHref="#settings"></use>
-                </svg>
-                <span>Settings</span>
-              </a>
-            </li>
-            <li>
-              <a href="#0">
-                <svg>
-                  <use xlinkHref="#options"></use>
-                </svg>
-                <span>Options</span>
               </a>
             </li>
             <li>
@@ -596,16 +634,11 @@ export function AdminDashboard() {
 
       <section className="page-content">
         <div className="search-and-user">
-          <form>
-            <input type="search" placeholder="Search..." />
-            <button type="submit">
-              <svg>
-                <use xlinkHref="#search"></use>
-              </svg>
-            </button>
-          </form>
+          <h2 style={{ fontSize: "24px", fontWeight: "600", color: "#333" }}>
+            Welcome to Admin Dashboard
+          </h2>
           <div className="admin-profile" style={{ position: "relative" }}>
-            <div className="greeting">Hello, Admin!</div>
+            <div className="greeting">Hello, {currentUserDisplayName}!</div>
             <svg
               style={{ cursor: "pointer" }}
               onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -660,49 +693,15 @@ export function AdminDashboard() {
         </div>
 
         {activeView === "dashboard" && (
-          <div className="grid">
-            <article>
-              <div className="flex items-center justify-center w-full h-full p-8">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">User Management</h2>
-                  <p className="text-gray-600">
-                    Manage registered users and their permissions
-                  </p>
-                </div>
-              </div>
-            </article>
-            <article>
-              <div className="flex items-center justify-center w-full h-full p-8">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">Cat Database</h2>
-                  <p className="text-gray-600">
-                    Add, edit, and manage campus cats
-                  </p>
-                </div>
-              </div>
-            </article>
-            <article>
-              <div className="flex items-center justify-center w-full h-full p-8">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">
-                    Analytics Dashboard
-                  </h2>
-                  <p className="text-gray-600">
-                    View site statistics and user engagement
-                  </p>
-                </div>
-              </div>
-            </article>
-            <article>
-              <div className="flex items-center justify-center w-full h-full p-8">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold mb-4">System Settings</h2>
-                  <p className="text-gray-600">
-                    Configure application settings and preferences
-                  </p>
-                </div>
-              </div>
-            </article>
+          <div className="flex items-center justify-center w-full h-full p-16">
+            <div className="text-center">
+              <h2 className="text-3xl font-bold mb-4 text-gray-800 dark:text-gray-200">
+                Welcome to the Admin Dashboard
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400">
+                Select an option from the menu to get started
+              </p>
+            </div>
           </div>
         )}
 
@@ -727,6 +726,9 @@ export function AdminDashboard() {
                       </th>
                       <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300 w-1/6">
                         Status
+                      </th>
+                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
+                        Actions
                       </th>
                     </tr>
                   </thead>
@@ -757,6 +759,49 @@ export function AdminDashboard() {
                           >
                             {user.banned ? "Banned" : "Active"}
                           </span>
+                        </td>
+                        <td className="px-8 py-5 text-base relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMenu(user.id, e);
+                            }}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                            aria-label="Options"
+                          >
+                            <svg
+                              className="w-5 h-5 text-gray-600 dark:text-gray-400"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </button>
+                          {openMenuId === user.id && menuPosition && (
+                            <div
+                              className="fixed z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 min-w-[160px]"
+                              style={{
+                                top: `${menuPosition.top}px`,
+                                left: `${menuPosition.left}px`,
+                              }}
+                            >
+                              <button
+                                onClick={() => handleBanUser(user.id)}
+                                className="w-full px-4 py-2 text-left text-sm text-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 transition-colors"
+                              >
+                                Ban User
+                              </button>
+                              <button
+                                onClick={() => {
+                                  console.log("Delete User:", user.id);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                              >
+                                Delete User
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
@@ -793,6 +838,9 @@ export function AdminDashboard() {
                       <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300 w-1/6">
                         Status
                       </th>
+                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
@@ -817,6 +865,40 @@ export function AdminDashboard() {
                             Banned
                           </span>
                         </td>
+                        <td className="px-8 py-5 text-base relative">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleMenu(user.id, e);
+                            }}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                            aria-label="Options"
+                          >
+                            <svg
+                              className="w-5 h-5 text-gray-600 dark:text-gray-400"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                            </svg>
+                          </button>
+                          {openMenuId === user.id && menuPosition && (
+                            <div
+                              className="fixed z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 min-w-[160px]"
+                              style={{
+                                top: `${menuPosition.top}px`,
+                                left: `${menuPosition.left}px`,
+                              }}
+                            >
+                              <button
+                                onClick={() => handleUnbanUser(user.id)}
+                                className="w-full px-4 py-2 text-left text-sm text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors"
+                              >
+                                Unban User
+                              </button>
+                            </div>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -836,237 +918,200 @@ export function AdminDashboard() {
             {loading ? (
               <div className="text-center py-8">Loading cats...</div>
             ) : cats.length > 0 ? (
-              <div
-                className="bg-white dark:bg-gray-800 shadow-sm border-2 border-gray-300 dark:border-gray-600"
-                style={{ overflowX: "auto", overflowY: "visible" }}
-              >
-                <table className="w-full">
-                  <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
-                    <tr>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        ID
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Cat Name
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Color
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Personality
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Age
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Favorite Spot
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Sightings
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Best Time
-                      </th>
-                      <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                    {cats.map((cat) => {
-                      const isEditing = editingCatId === cat.id;
-                      const displayData =
-                        isEditing && editedCatData ? editedCatData : cat;
+              (() => {
+                // Automatically detect all unique fields across all cats
+                const allFields = new Set<string>();
+                cats.forEach((cat) => {
+                  Object.keys(cat).forEach((key) => {
+                    if (key !== "id") {
+                      // Always show ID separately
+                      allFields.add(key);
+                    }
+                  });
+                });
 
-                      return (
-                        <tr
-                          key={cat.id}
-                          className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {cat.id}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.name || ""}
-                                onChange={(e) =>
-                                  handleInputChange("name", e.target.value)
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.name || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.color || ""}
-                                onChange={(e) =>
-                                  handleInputChange("color", e.target.value)
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.color || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.personality || ""}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    "personality",
-                                    e.target.value
-                                  )
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.personality || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.age || ""}
-                                onChange={(e) =>
-                                  handleInputChange("age", e.target.value)
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.age || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.favSpot || ""}
-                                onChange={(e) =>
-                                  handleInputChange("favSpot", e.target.value)
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.favSpot || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="number"
-                                value={displayData.sightings || 0}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    "sightings",
-                                    parseInt(e.target.value) || 0
-                                  )
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.sightings || 0
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
-                            {isEditing ? (
-                              <input
-                                type="text"
-                                value={displayData.bestTime || ""}
-                                onChange={(e) =>
-                                  handleInputChange("bestTime", e.target.value)
-                                }
-                                className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
-                              />
-                            ) : (
-                              displayData.bestTime || "N/A"
-                            )}
-                          </td>
-                          <td className="px-8 py-5 text-base relative">
-                            {isEditing ? (
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={handleSaveCat}
-                                  className="px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  onClick={handleCancelEdit}
-                                  className="px-5 py-2.5 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors"
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            ) : (
-                              <>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleMenu(cat.id, e);
-                                  }}
-                                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
-                                  aria-label="Options"
-                                >
-                                  <svg
-                                    className="w-5 h-5 text-gray-600 dark:text-gray-400"
-                                    fill="currentColor"
-                                    viewBox="0 0 16 16"
-                                  >
-                                    <circle cx="8" cy="3" r="1.5" />
-                                    <circle cx="8" cy="8" r="1.5" />
-                                    <circle cx="8" cy="13" r="1.5" />
-                                  </svg>
-                                </button>
-                                {openMenuId === cat.id && menuPosition && (
-                                  <div
-                                    className="fixed bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-200 dark:border-gray-700 w-48"
-                                    style={{
-                                      top: `${menuPosition.top}px`,
-                                      left: `${menuPosition.left}px`,
-                                      zIndex: 9999,
-                                    }}
-                                  >
-                                    <div className="py-1">
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleEditCat(cat);
-                                          setOpenMenuId(null);
-                                        }}
-                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors block"
-                                      >
-                                        Update Cat
-                                      </button>
-                                      <button
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteCat(cat.id);
-                                        }}
-                                        className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors block"
-                                      >
-                                        Delete Cat
-                                      </button>
-                                    </div>
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </td>
+                // Convert to array and filter out fields with no data
+                let activeFields = Array.from(allFields).filter((field) => {
+                  return cats.some((cat) => {
+                    const value = cat[field];
+                    return (
+                      value !== null &&
+                      value !== undefined &&
+                      value !== "" &&
+                      value !== 0
+                    );
+                  });
+                });
+
+                // Reorder fields: move 'name' to appear before 'personality'
+                const nameIndex = activeFields.indexOf("name");
+                const personalityIndex = activeFields.indexOf("personality");
+                if (
+                  nameIndex !== -1 &&
+                  personalityIndex !== -1 &&
+                  nameIndex > personalityIndex
+                ) {
+                  // Remove 'name' from its current position
+                  activeFields.splice(nameIndex, 1);
+                  // Insert 'name' before 'personality'
+                  const newPersonalityIndex =
+                    activeFields.indexOf("personality");
+                  activeFields.splice(newPersonalityIndex, 0, "name");
+                }
+
+                // Helper function to format field names for display
+                const formatFieldName = (field: string) => {
+                  return field
+                    .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                    .replace(/^./, (str) => str.toUpperCase()) // Capitalize first letter
+                    .trim();
+                };
+
+                return (
+                  <div
+                    className="bg-white dark:bg-gray-800 shadow-sm border-2 border-gray-300 dark:border-gray-600"
+                    style={{ overflowX: "auto", overflowY: "visible" }}
+                  >
+                    <table className="w-full">
+                      <thead className="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+                        <tr>
+                          <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
+                            ID
+                          </th>
+                          {activeFields.map((field) => (
+                            <th
+                              key={field}
+                              className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300"
+                            >
+                              {formatFieldName(field)}
+                            </th>
+                          ))}
+                          <th className="px-8 py-5 text-left text-base font-semibold text-gray-700 dark:text-gray-300">
+                            Actions
+                          </th>
                         </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                      </thead>
+                      <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+                        {cats.map((cat) => {
+                          const isEditing = editingCatId === cat.id;
+                          const displayData =
+                            isEditing && editedCatData ? editedCatData : cat;
+
+                          return (
+                            <tr
+                              key={cat.id}
+                              className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                            >
+                              <td className="px-8 py-5 text-base text-gray-900 dark:text-gray-100">
+                                {cat.id}
+                              </td>
+                              {activeFields.map((field) => (
+                                <td
+                                  key={field}
+                                  className="px-8 py-5 text-base text-gray-900 dark:text-gray-100"
+                                >
+                                  {isEditing ? (
+                                    <input
+                                      type={
+                                        typeof displayData[field] === "number"
+                                          ? "number"
+                                          : "text"
+                                      }
+                                      value={displayData[field] ?? ""}
+                                      onChange={(e) =>
+                                        handleInputChange(
+                                          field,
+                                          typeof displayData[field] === "number"
+                                            ? parseInt(e.target.value) || 0
+                                            : e.target.value
+                                        )
+                                      }
+                                      className="w-full px-3 py-2 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600"
+                                    />
+                                  ) : (
+                                    displayData[field] ?? "N/A"
+                                  )}
+                                </td>
+                              ))}
+                              <td className="px-8 py-5 text-base relative">
+                                {isEditing ? (
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={handleSaveCat}
+                                      className="px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-md hover:bg-green-700 transition-colors"
+                                    >
+                                      Save
+                                    </button>
+                                    <button
+                                      onClick={handleCancelEdit}
+                                      className="px-5 py-2.5 bg-gray-600 text-white text-sm font-medium rounded-md hover:bg-gray-700 transition-colors"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleMenu(cat.id, e);
+                                      }}
+                                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                                      aria-label="Options"
+                                    >
+                                      <svg
+                                        className="w-5 h-5 text-gray-600 dark:text-gray-400"
+                                        fill="currentColor"
+                                        viewBox="0 0 16 16"
+                                      >
+                                        <circle cx="8" cy="3" r="1.5" />
+                                        <circle cx="8" cy="8" r="1.5" />
+                                        <circle cx="8" cy="13" r="1.5" />
+                                      </svg>
+                                    </button>
+                                    {openMenuId === cat.id && menuPosition && (
+                                      <div
+                                        className="fixed bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-200 dark:border-gray-700 w-48"
+                                        style={{
+                                          top: `${menuPosition.top}px`,
+                                          left: `${menuPosition.left}px`,
+                                          zIndex: 9999,
+                                        }}
+                                      >
+                                        <div className="py-1">
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleEditCat(cat);
+                                              setOpenMenuId(null);
+                                            }}
+                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors block"
+                                          >
+                                            Update Cat
+                                          </button>
+                                          <button
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleDeleteCat(cat.id);
+                                            }}
+                                            className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors block"
+                                          >
+                                            Delete Cat
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </>
+                                )}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                );
+              })()
             ) : (
               <div className="text-center py-8 text-gray-600">
                 No cats found in database

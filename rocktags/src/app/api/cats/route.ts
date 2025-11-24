@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-import * as serviceAccount from "../../../../rocktags-testing-firebase-adminsdk-fbsvc-e48f186959.json";
 
-// Initialize Firebase Admin SDK
+// Initialize Firebase Admin SDK with environment variables
 let app;
 if (!getApps().length) {
   app = initializeApp({
-    credential: cert(serviceAccount as any),
+    credential: cert({
+      projectId: process.env.FIREBASE_ADMIN_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+    } as any),
   });
 } else {
   app = getApps()[0];

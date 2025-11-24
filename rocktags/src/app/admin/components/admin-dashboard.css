@@ -3,12 +3,12 @@
 @import url("https://fonts.googleapis.com/css?family=Lato:400,700&display=swap");
 
 :root {
-  --page-header-bgColor: #242e42;
-  --page-header-bgColor-hover: #1d2636;
+  --page-header-bgColor: #4e2a17;
+  --page-header-bgColor-hover: #3d2112;
   --page-header-txtColor: #dde9f8;
-  --page-header-headingColor: #7889a4;
+  --page-header-headingColor: #e2c3a7;
   --page-header-width: 220px;
-  --page-content-bgColor: #f0f1f6;
+  --page-content-bgColor: #fffcf4;
   --page-content-txtColor: #171616;
   --page-content-blockColor: #fff;
   --white: #fff;

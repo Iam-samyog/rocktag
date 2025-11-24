@@ -123,3 +123,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Font families set by layout variables */
+:root {
+  --font-heading: 'Poppins', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  --font-body: 'Roboto', system-ui, -apple-system, 'Segoe UI', Arial;
+  --brand-brown: #4E2A17;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-heading);
+  color: var(--brand-brown);
+}
+
+body, p, a, span, li, button {
+  font-family: var(--font-body);
+}
+
+.site-header, .site-footer {
+  background-color: var(--brand-brown);
+  color: white;
+}
+
+.site-header a, .site-footer a { color: rgba(255,255,255,0.95); }
+
+.container { max-width: 1200px; margin: 0 auto; }
+

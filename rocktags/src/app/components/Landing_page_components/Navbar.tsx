@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Cat, Sparkles, Menu, X } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -8,10 +9,43 @@ import {
   faUsers,
   faGauge,
 } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { auth } from "@/config/firebase";
 
 export function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  // Hide admin button on landing page
+  const isLandingPage = pathname === "/";
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setIsAuthenticated(!!user);
+      setAuthChecked(true);
+
+      if (user && user.email) {
+        try {
+          const response = await fetch("/api/users");
+          if (response.ok) {
+            const usersData = await response.json();
+            const currentUser = usersData.find(
+              (u: any) => u.email === user.email
+            );
+            setIsAdmin(currentUser?.role === "Admin");
+          }
+        } catch (error) {
+          console.error("Error checking admin role:", error);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <nav className="py-5 fixed inset-x-0 top-0 z-50 bg-gradient-to-br from-[#3d1f0f] to-[#2a1508] backdrop-blur-md border-b border-white/10">
@@ -36,20 +70,24 @@ export function Navbar() {
             <FontAwesomeIcon icon={faInfoCircle} className="w-5 h-5" />
             <span className="font-medium">About</span>
           </Link>
-          <Link
-            href="/acm"
+          <a
+            href="https://www.acmuta.com/about"
+            target="_blank"
+            rel="noopener noreferrer"
             className="flex items-center space-x-2 hover:text-[#847570] transition-all duration-300 hover:scale-105"
           >
             <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
             <span className="font-medium">ACM</span>
-          </Link>
-          <Link
-            href="/admin"
-            className="flex items-center space-x-2 hover:text-[#847570] transition-all duration-300 hover:scale-105"
-          >
-            <FontAwesomeIcon icon={faGauge} className="w-5 h-5" />
-            <span className="font-medium">Admin Dashboard</span>
-          </Link>
+          </a>
+          {!isLandingPage && authChecked && isAuthenticated && isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center space-x-2 hover:text-[#847570] transition-all duration-300 hover:scale-105"
+            >
+              <FontAwesomeIcon icon={faGauge} className="w-5 h-5" />
+              <span className="font-medium">Admin Dashboard</span>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Toggle Button */}
@@ -81,22 +119,26 @@ export function Navbar() {
             <FontAwesomeIcon icon={faInfoCircle} className="w-5 h-5" />
             <span className="font-medium">About</span>
           </Link>
-          <Link
-            href="/acm"
+          <a
+            href="https://www.acmuta.com/about"
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setIsOpen(false)}
             className="flex items-center space-x-3 text-white hover:text-[#847570] transition-all duration-200 hover:pl-2"
           >
             <FontAwesomeIcon icon={faUsers} className="w-5 h-5" />
             <span className="font-medium">ACM</span>
-          </Link>
-          <Link
-            href="/admin"
-            onClick={() => setIsOpen(false)}
-            className="flex items-center space-x-3 text-white hover:text-[#847570] transition-all duration-200 hover:pl-2"
-          >
-            <FontAwesomeIcon icon={faGauge} className="w-5 h-5" />
-            <span className="font-medium">Admin Dashboard</span>
-          </Link>
+          </a>
+          {!isLandingPage && authChecked && isAuthenticated && isAdmin && (
+            <Link
+              href="/admin"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center space-x-3 text-white hover:text-[#847570] transition-all duration-200 hover:pl-2"
+            >
+              <FontAwesomeIcon icon={faGauge} className="w-5 h-5" />
+              <span className="font-medium">Admin Dashboard</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
