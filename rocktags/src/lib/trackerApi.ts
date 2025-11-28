@@ -1,11 +1,10 @@
 /**
  * Tracker API Service
- * Fetches real-time cat location data from the backend
+ * Fetches real-time cat location data from the backend via API proxy
  */
 
-const TRACKER_API_URL = 
-  process.env.NEXT_PUBLIC_TRACKER_API_URL || 
-  "https://rocktags-backend-147809513475.us-south1.run.app/findmy/";
+// Use the local API proxy to avoid CORS issues
+const TRACKER_API_URL = "/api/tracker";
 
 const TRACKER_TIMEOUT = 
   parseInt(process.env.NEXT_PUBLIC_TRACKER_TIMEOUT || "10000");
