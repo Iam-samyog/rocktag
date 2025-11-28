@@ -76,7 +76,8 @@ export default function MapPage() {
           }),
         }));
       } catch (err) {
-        console.error("Failed to update tracker locations:", err);
+        console.error("Failed to update tracker locations, using static data:", err);
+        // Don't break the map - just keep using the current cat positions
       } finally {
         setIsUpdatingLocations(false);
       }

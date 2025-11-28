@@ -3,7 +3,12 @@
  * Fetches real-time cat location data from the backend
  */
 
-const TRACKER_API_URL = "https://rocktags-backend-147809513475.us-south1.run.app/findmy/";
+const TRACKER_API_URL = 
+  process.env.NEXT_PUBLIC_TRACKER_API_URL || 
+  "https://rocktags-backend-147809513475.us-south1.run.app/findmy/";
+
+const TRACKER_TIMEOUT = 
+  parseInt(process.env.NEXT_PUBLIC_TRACKER_TIMEOUT || "10000");
 
 export interface TrackerRequest {
   name: string;
@@ -30,21 +35,39 @@ export async function fetchTrackerLocations(
   trackers: TrackerRequest[]
 ): Promise<TrackerResponse> {
   try {
+    console.log("Fetching tracker locations from:", TRACKER_API_URL);
+    console.log("Sending trackers:", trackers);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TRACKER_TIMEOUT);
+
     const response = await fetch(TRACKER_API_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ trackers }),
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error(`Tracker API error: ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`API Error ${response.status}:`, errorText);
+      throw new Error(`Tracker API error: ${response.status} ${response.statusText}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    console.log("Tracker API response:", data);
+    return data;
   } catch (error) {
-    console.error("Failed to fetch tracker locations:", error);
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      console.error("Network error - API may be unreachable:", error);
+      console.warn("CORS or network connectivity issue detected");
+    } else {
+      console.error("Failed to fetch tracker locations:", error);
+    }
     throw error;
   }
 }
