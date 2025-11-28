@@ -9,27 +9,40 @@ export async function POST(request: Request) {
     console.log("📤 Received tracker request body:", body);
     console.log("📤 Body type:", Array.isArray(body) ? "array" : typeof body);
 
-    // Body should be the trackers array directly
-    const trackers = Array.isArray(body) ? body : body.trackers || [];
+    // Expected format: { trackers: [...] }
+    let trackers = [];
+    
+    if (Array.isArray(body)) {
+      // If we received just an array, wrap it
+      trackers = body;
+      console.log("📤 Wrapped array as trackers");
+    } else if (body.trackers && Array.isArray(body.trackers)) {
+      // If we received { trackers: [...] }, use it as is
+      trackers = body.trackers;
+      console.log("📤 Using trackers from body.trackers");
+    }
+    
     console.log("📤 Extracted trackers:", trackers);
     console.log("📤 Trackers count:", trackers.length);
-    console.log("📤 First tracker:", trackers[0]);
+    if (trackers.length > 0) {
+      console.log("📤 First tracker:", trackers[0]);
+    }
 
     const backendUrl = process.env.NEXT_PUBLIC_TRACKER_API_URL || 
       "https://rocktags-backend-147809513475.us-south1.run.app/findmy/";
     
     console.log("📡 Forwarding to backend:", backendUrl);
     
-    // Try sending as array first, then wrapped in object if needed
-    let requestBody = JSON.stringify(trackers);
-    console.log("📤 Request body being sent:", requestBody);
+    // Send in the correct format: { trackers: [...] }
+    const requestBody = { trackers };
+    console.log("📤 Request body being sent:", JSON.stringify(requestBody));
 
     const response = await fetch(backendUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: requestBody,
+      body: JSON.stringify(requestBody),
     });
 
     console.log("📥 Backend response status:", response.status);

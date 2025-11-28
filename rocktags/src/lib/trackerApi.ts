@@ -38,7 +38,8 @@ export async function fetchTrackerLocations(
     console.log("📋 Sending trackers:", trackers);
     console.log("📋 Trackers count:", trackers.length);
     console.log("📋 First tracker:", trackers[0]);
-    console.log("📋 Request body will be:", JSON.stringify(trackers));
+    const requestBody = { trackers };
+    console.log("📋 Request body will be:", JSON.stringify(requestBody));
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TRACKER_TIMEOUT);
@@ -48,7 +49,7 @@ export async function fetchTrackerLocations(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(trackers),
+      body: JSON.stringify(requestBody),
       signal: controller.signal,
     });
 
