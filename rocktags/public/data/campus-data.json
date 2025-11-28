@@ -26,15 +26,15 @@
     }
   ],
   "buildings": [
-    { "name": "E.H. Hereford University Center", "abbr": "UC", "lat": 32.7315, "lng": -97.11, "priority": 1 },
-    { "name": "Central Library", "abbr": "LIBR", "lat": 32.7312, "lng": -97.1147, "priority": 1 },
-    { "name": "Maverick Stadium", "abbr": "STAD", "lat": 32.7351, "lng": -97.1202, "priority": 1 },
-    { "name": "Engineering Research Building", "abbr": "ERB", "lat": 32.7320, "lng": -97.1120, "priority": 1 },
-    { "name": "Science Hall", "abbr": "SH", "lat": 32.7310, "lng": -97.1118, "priority": 2 },
-    { "name": "College of Business", "abbr": "COB", "lat": 32.7305, "lng": -97.1130, "priority": 1 },
-    { "name": "College of Nursing", "abbr": "CONHI", "lat": 32.7298, "lng": -97.1150, "priority": 2 },
-    { "name": "Fine Arts Building", "abbr": "FAB", "lat": 32.7325, "lng": -97.1100, "priority": 1 },
-    { "name": "Architecture Building", "abbr": "ARCH", "lat": 32.7330, "lng": -97.1135, "priority": 2 },
-    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.7340, "lng": -97.1090, "priority": 1 }
+    { "name": "E.H. Hereford University Center", "abbr": "UC", "lat": 32.7315, "lng": -97.1108, "priority": 1 },
+    { "name": "Central Library", "abbr": "LIBR", "lat": 32.7297, "lng": -97.1129, "priority": 1 },
+    { "name": "Maverick Stadium", "abbr": "STAD", "lat": 32.7368, "lng": -97.1220, "priority": 1 },
+    { "name": "Engineering Research Building", "abbr": "ERB", "lat": 32.7321, "lng": -97.1142, "priority": 1 },
+    { "name": "Science Hall", "abbr": "SH", "lat": 32.7316, "lng": -97.1118, "priority": 2 },
+    { "name": "College of Business", "abbr": "COB", "lat": 32.7306, "lng": -97.1120, "priority": 1 },
+    { "name": "College of Nursing", "abbr": "CONHI", "lat": 32.7294, "lng": -97.1118, "priority": 2 },
+    { "name": "Fine Arts Building", "abbr": "FAB", "lat": 32.7327, "lng": -97.1089, "priority": 1 },
+    { "name": "Architecture Building", "abbr": "ARCH", "lat": 32.7305, "lng": -97.1105, "priority": 2 },
+    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.7313, "lng": -97.1145, "priority": 1 }
   ]
 }
