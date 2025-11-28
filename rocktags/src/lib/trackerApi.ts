@@ -34,8 +34,11 @@ export async function fetchTrackerLocations(
   trackers: TrackerRequest[]
 ): Promise<TrackerResponse> {
   try {
-    console.log("Fetching tracker locations from:", TRACKER_API_URL);
-    console.log("Sending trackers:", trackers);
+    console.log("🔄 Fetching tracker locations from:", TRACKER_API_URL);
+    console.log("📋 Sending trackers:", trackers);
+    console.log("📋 Trackers count:", trackers.length);
+    console.log("📋 First tracker:", trackers[0]);
+    console.log("📋 Request body will be:", JSON.stringify(trackers));
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TRACKER_TIMEOUT);
@@ -51,21 +54,24 @@ export async function fetchTrackerLocations(
 
     clearTimeout(timeoutId);
 
+    console.log("📥 Response status:", response.status);
+    console.log("📥 Response headers:", Object.fromEntries(response.headers));
+
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`API Error ${response.status}:`, errorText);
+      console.error(`❌ API Error ${response.status}:`, errorText);
       throw new Error(`Tracker API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log("Tracker API response:", data);
+    console.log("✅ Tracker API response:", data);
     return data;
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("fetch")) {
-      console.error("Network error - API may be unreachable:", error);
+      console.error("❌ Network error - API may be unreachable:", error);
       console.warn("CORS or network connectivity issue detected");
     } else {
-      console.error("Failed to fetch tracker locations:", error);
+      console.error("❌ Failed to fetch tracker locations:", error);
     }
     throw error;
   }
