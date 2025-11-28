@@ -15,6 +15,7 @@
       "sightings": 156,
       "bestTime": "Noon",
       "profileImage": "/image/catimage.jpg",
+      "privateKey": "E5kjUrGAdT6kP2tRie73RbABIrRRNJICu0fwWg==",
       "gallery": [
         "/image/catimage.jpg",
         "/image/catimage.jpg",
@@ -39,6 +40,7 @@
       "sightings": 89,
       "bestTime": "Morning",
       "profileImage": "",
+      "privateKey": "YOUR_PRIVATE_KEY_HERE",
       "gallery": [
         "",
         ""
