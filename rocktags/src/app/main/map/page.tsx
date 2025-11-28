@@ -55,8 +55,12 @@ export default function MapPage() {
           return;
         }
 
+        console.log("🔄 Updating tracker locations for:", trackerRequests);
+
         // Fetch real-time locations from backend
         const locations = await fetchTrackerLocations(trackerRequests);
+
+        console.log("📍 Received tracker locations:", locations);
 
         // Update cat positions with real-time data
         setData((prevData) => ({
@@ -64,6 +68,7 @@ export default function MapPage() {
           cats: prevData.cats.map((cat) => {
             const trackerData = locations[cat.name];
             if (trackerData) {
+              console.log(`✅ Updating ${cat.name} to:`, trackerData);
               return {
                 ...cat,
                 lat: trackerData.latitude,
