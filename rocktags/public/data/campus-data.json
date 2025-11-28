@@ -2,9 +2,9 @@
   "cats": [
     {
       "id": 1,
-      "name": "Microwave",
-      "lat": 32.7315,
-      "lng": -97.11,
+      "name": "cat1",
+      "lat": 32.692513,
+      "lng": -97.0764474,
       "color": "Orange Tabby",
       "personality": "Friendly",
       "activity": "Lounging",
@@ -24,97 +24,6 @@
       ],
       "favoriteRubbingPlace": "Under the chin",
       "traits": ["Sun-lover", "Treat-motivated", "Social"]
-    },
-    {
-      "id": 2,
-      "name": "Professor Whiskers",
-      "lat": 32.7312,
-      "lng": -97.1147,
-      "color": "Gray",
-      "personality": "Wise",
-      "activity": "Sitting on steps",
-      "age": 7,
-      "friendliness": 3,
-      "favSpot": "Library",
-      "bio": "Ancient sage of the library. Reads minds.",
-      "sightings": 89,
-      "bestTime": "Morning",
-      "profileImage": "",
-      "privateKey": "YOUR_PRIVATE_KEY_HERE",
-      "gallery": [
-        "",
-        ""
-      ],
-      "favoriteRubbingPlace": "Behind the ears",
-      "traits": ["Philosopher", "Quiet", "Observer"]
-    },
-    {
-      "id": 3,
-      "name": "Sushi",
-      "lat": 32.7320,
-      "lng": -97.1120,
-      "color": "Calico",
-      "personality": "Playful",
-      "activity": "Chasing leaves",
-      "age": 2,
-      "friendliness": 5,
-      "favSpot": "Engineering Quad",
-      "bio": "Loves laser pointers and engineering students.",
-      "sightings": 201,
-      "bestTime": "Afternoon",
-      "profileImage": "",
-      "gallery": [
-        "",
-        "",
-        ""
-      ],
-      "favoriteRubbingPlace": "Belly (when in the mood)",
-      "traits": ["Energetic", "Curious", "Laser-addict"]
-    },
-    {
-      "id": 4,
-      "name": "Mocha",
-      "lat": 32.7308,
-      "lng": -97.1105,
-      "color": "Tuxedo",
-      "personality": "Elegant",
-      "activity": "Posing for photos",
-      "age": 4,
-      "friendliness": 4,
-      "favSpot": "Student Center",
-      "bio": "Campus supermodel. Always camera-ready.",
-      "sightings": 134,
-      "bestTime": "Evening",
-      "profileImage": "",
-      "gallery": [
-        "",
-        ""
-      ],
-      "favoriteRubbingPlace": "Along the spine",
-      "traits": ["Photogenic", "Graceful", "Affectionate"]
-    },
-    {
-      "id": 5,
-      "name": "Noodle",
-      "lat": 32.7351,
-      "lng": -97.1202,
-      "color": "White",
-      "personality": "Lazy",
-      "activity": "Napping in grass",
-      "age": 5,
-      "friendliness": 4,
-      "favSpot": "Maverick Stadium",
-      "bio": "Sleeps 22 hours a day. Professional napper.",
-      "sightings": 98,
-      "bestTime": "All day",
-      "profileImage": "",
-      "gallery": [
-        "",
-        "",
-        ""
-      ],
-      "favoriteRubbingPlace": "Cheeks",
-      "traits": ["Sleepyhead", "Cuddly", "Low-energy"]
     }
   ],
   "buildings": [
