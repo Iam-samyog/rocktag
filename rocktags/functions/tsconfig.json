@@ -11,8 +11,7 @@
     "target": "es2017",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../src/*"],
-      "@/config/*": ["../src/config/*"]
+      "@/*": ["./*"]
     }
   },
   "compileOnSave": true,

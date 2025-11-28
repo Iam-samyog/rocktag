@@ -1,0 +1,30 @@
+/* src/index.css */
+
+@import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500|Jost:400,500,600&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0; /* Important for body styles */
+  padding: 0; /* Important for body styles */
+}
+
+/* Global page background from the original style.css */
+body {
+  color: #2b2c48;
+  font-family: "Jost", sans-serif;
+  /* Applying the global background image to the body */
+  /* background-image: url(https://images.unsplash.com/photo-1641326038434-01b0217c18f1?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D); */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* Keeping the root container styles from your original App.css for centering */
+#root {
+  max-width: 1280px;
+  /* width: 100%; */
+  margin: 0 auto;
+  text-align: center;
+}

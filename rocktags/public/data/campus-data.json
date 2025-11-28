@@ -39,18 +39,15 @@
       "sightings": 89,
       "bestTime": "Morning",
       "profileImage": "",
-      "gallery": [
-        "",
-        ""
-      ],
+      "gallery": ["/image/catimage.jpg", "/image/catimage.jpg"],
       "favoriteRubbingPlace": "Behind the ears",
       "traits": ["Philosopher", "Quiet", "Observer"]
     },
     {
       "id": 3,
       "name": "Sushi",
-      "lat": 32.7320,
-      "lng": -97.1120,
+      "lat": 32.732,
+      "lng": -97.112,
       "color": "Calico",
       "personality": "Playful",
       "activity": "Chasing leaves",
@@ -62,9 +59,9 @@
       "bestTime": "Afternoon",
       "profileImage": "",
       "gallery": [
-        "",
-        "",
-        ""
+        "/image/catimage.jpg",
+        "/image/catimage.jpg",
+        "/image/catimage.jpg"
       ],
       "favoriteRubbingPlace": "Belly (when in the mood)",
       "traits": ["Energetic", "Curious", "Laser-addict"]
@@ -84,10 +81,7 @@
       "sightings": 134,
       "bestTime": "Evening",
       "profileImage": "",
-      "gallery": [
-        "",
-        ""
-      ],
+      "gallery": ["/image/catimage.jpg", "/image/catimage.jpg"],
       "favoriteRubbingPlace": "Along the spine",
       "traits": ["Photogenic", "Graceful", "Affectionate"]
     },
@@ -107,24 +101,84 @@
       "bestTime": "All day",
       "profileImage": "",
       "gallery": [
-        "",
-        "",
-        ""
+        "/image/catimage.jpg",
+        "/image/catimage.jpg",
+        "/image/catimage.jpg"
       ],
       "favoriteRubbingPlace": "Cheeks",
       "traits": ["Sleepyhead", "Cuddly", "Low-energy"]
     }
   ],
   "buildings": [
-    { "name": "E.H. Hereford University Center", "abbr": "UC", "lat": 32.7315, "lng": -97.11, "priority": 1 },
-    { "name": "Central Library", "abbr": "LIBR", "lat": 32.7312, "lng": -97.1147, "priority": 1 },
-    { "name": "Maverick Stadium", "abbr": "STAD", "lat": 32.7351, "lng": -97.1202, "priority": 1 },
-    { "name": "Engineering Research Building", "abbr": "ERB", "lat": 32.7320, "lng": -97.1120, "priority": 1 },
-    { "name": "Science Hall", "abbr": "SH", "lat": 32.7310, "lng": -97.1118, "priority": 2 },
-    { "name": "College of Business", "abbr": "COB", "lat": 32.7305, "lng": -97.1130, "priority": 1 },
-    { "name": "College of Nursing", "abbr": "CONHI", "lat": 32.7298, "lng": -97.1150, "priority": 2 },
-    { "name": "Fine Arts Building", "abbr": "FAB", "lat": 32.7325, "lng": -97.1100, "priority": 1 },
-    { "name": "Architecture Building", "abbr": "ARCH", "lat": 32.7330, "lng": -97.1135, "priority": 2 },
-    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.7340, "lng": -97.1090, "priority": 1 }
+    {
+      "name": "E.H. Hereford University Center",
+      "abbr": "UC",
+      "lat": 32.7315,
+      "lng": -97.11,
+      "priority": 1
+    },
+    {
+      "name": "Central Library",
+      "abbr": "LIBR",
+      "lat": 32.7312,
+      "lng": -97.1147,
+      "priority": 1
+    },
+    {
+      "name": "Maverick Stadium",
+      "abbr": "STAD",
+      "lat": 32.7351,
+      "lng": -97.1202,
+      "priority": 1
+    },
+    {
+      "name": "Engineering Research Building",
+      "abbr": "ERB",
+      "lat": 32.732,
+      "lng": -97.112,
+      "priority": 1
+    },
+    {
+      "name": "Science Hall",
+      "abbr": "SH",
+      "lat": 32.731,
+      "lng": -97.1118,
+      "priority": 2
+    },
+    {
+      "name": "College of Business",
+      "abbr": "COB",
+      "lat": 32.7305,
+      "lng": -97.113,
+      "priority": 1
+    },
+    {
+      "name": "College of Nursing",
+      "abbr": "CONHI",
+      "lat": 32.7298,
+      "lng": -97.115,
+      "priority": 2
+    },
+    {
+      "name": "Fine Arts Building",
+      "abbr": "FAB",
+      "lat": 32.7325,
+      "lng": -97.11,
+      "priority": 1
+    },
+    {
+      "name": "Architecture Building",
+      "abbr": "ARCH",
+      "lat": 32.733,
+      "lng": -97.1135,
+      "priority": 2
+    },
+    {
+      "name": "Planetarium",
+      "abbr": "PLAN",
+      "lat": 32.734,
+      "lng": -97.109,
+      "priority": 1
+    }
   ]
 }
