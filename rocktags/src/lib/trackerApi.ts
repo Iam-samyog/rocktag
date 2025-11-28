@@ -60,21 +60,31 @@ export async function fetchTrackerLocations(
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`❌ API Error ${response.status}:`, errorText);
-      throw new Error(`Tracker API error: ${response.status} ${response.statusText}`);
+      console.error(`⚠️ API Error ${response.status}:`, errorText);
+      console.warn("⚠️ Backend unavailable - will use static cat positions");
+      // Return empty object so map uses static positions
+      return {};
     }
 
     const data = await response.json();
     console.log("✅ Tracker API response:", data);
+    
+    // If response is empty, return it (map will use static positions)
+    if (Object.keys(data).length === 0) {
+      console.warn("⚠️ Backend returned empty response - using static cat positions");
+    }
+    
     return data;
   } catch (error) {
     if (error instanceof TypeError && error.message.includes("fetch")) {
-      console.error("❌ Network error - API may be unreachable:", error);
-      console.warn("CORS or network connectivity issue detected");
+      console.error("⚠️ Network error - API may be unreachable:", error);
+      console.warn("⚠️ CORS or network connectivity issue detected - using static cat positions");
     } else {
-      console.error("❌ Failed to fetch tracker locations:", error);
+      console.error("⚠️ Failed to fetch tracker locations:", error);
+      console.warn("⚠️ Using static cat positions as fallback");
     }
-    throw error;
+    // Return empty object so map uses static positions
+    return {};
   }
 }
 

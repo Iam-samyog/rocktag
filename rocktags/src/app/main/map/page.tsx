@@ -67,26 +67,31 @@ export default function MapPage() {
 
         console.log("📍 Received tracker locations:", locations);
 
-        // Update cat positions with real-time data
-        setData((prevData) => ({
-          ...prevData,
-          cats: prevData.cats.map((cat) => {
-            const trackerData = locations[cat.name];
-            if (trackerData) {
-              console.log(`✅ Updating ${cat.name} to:`, trackerData);
-              return {
-                ...cat,
-                lat: trackerData.latitude,
-                lng: trackerData.longitude,
-                lastUpdated: trackerData.timestamp,
-                isRealTime: true,
-              };
-            }
-            return cat;
-          }),
-        }));
+        // Check if we got any real-time data
+        if (Object.keys(locations).length === 0) {
+          console.warn("⚠️ No tracker data received - using static cat positions from campus-data.json");
+        } else {
+          // Update cat positions with real-time data
+          setData((prevData) => ({
+            ...prevData,
+            cats: prevData.cats.map((cat) => {
+              const trackerData = locations[cat.name];
+              if (trackerData) {
+                console.log(`✅ Updating ${cat.name} to:`, trackerData);
+                return {
+                  ...cat,
+                  lat: trackerData.latitude,
+                  lng: trackerData.longitude,
+                  lastUpdated: trackerData.timestamp,
+                  isRealTime: true,
+                };
+              }
+              return cat;
+            }),
+          }));
+        }
       } catch (err) {
-        console.error("❌ Failed to update tracker locations:", err);
+        console.error("⚠️ Failed to update tracker locations:", err);
         console.warn("⚠️ Using static cat positions from campus-data.json");
         // Don't break the map - just keep using the current cat positions
       } finally {
