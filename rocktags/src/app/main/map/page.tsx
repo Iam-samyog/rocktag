@@ -35,8 +35,13 @@ export default function MapPage() {
         if (!res.ok) throw new Error("Not found");
         return res.json();
       })
-      .then(setData)
-      .catch((err) => console.error("Failed to load campus data:", err));
+      .then((fetchedData) => {
+        console.log("✅ Campus data loaded:", fetchedData);
+        console.log("📍 Cats:", fetchedData.cats);
+        console.log("🏢 Buildings:", fetchedData.buildings);
+        setData(fetchedData);
+      })
+      .catch((err) => console.error("❌ Failed to load campus data:", err));
   }, []);
 
   // Fetch real-time tracker locations

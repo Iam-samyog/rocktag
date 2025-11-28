@@ -218,6 +218,15 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   const [zoom, setZoom] = useState(16);
   const markersRef = useRef<google.maps.Marker[]>([]);
 
+  // Debug: Log received props
+  useEffect(() => {
+    console.log("🗺️ MapWithCatsAndBuildings received props:");
+    console.log("📍 Cats count:", cats.length);
+    console.log("📍 Cats data:", cats);
+    console.log("🏢 Buildings count:", buildings.length);
+    console.log("🏢 Buildings data:", buildings);
+  }, [cats, buildings]);
+
   /* ---------- INIT MAP ---------- */
   useEffect(() => {
     if (!window.google?.maps || !mapRef.current) return;
@@ -243,6 +252,11 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   /* ---------- MARKERS ---------- */
   useEffect(() => {
     if (!map) return;
+    
+    console.log("🗺️ Creating markers:");
+    console.log("📍 Cats to display:", cats.length);
+    console.log("🏢 Buildings to display:", buildings.length);
+    
     markersRef.current.forEach(m => m.setMap(null));
     markersRef.current = [];
 
@@ -251,12 +265,16 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ...buildings.map(b => ({ type: 'building' as const, data: b, key: `bld-${b.abbr}` }))
     ];
 
+    console.log("🗺️ Total items to place:", items.length);
+
     const groups = new Map<string, typeof items>();
     items.forEach(item => {
       const key = `${item.data.lat.toFixed(6)},${item.data.lng.toFixed(6)}`;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(item);
     });
+
+    console.log("🗺️ Grouped by location:", groups.size);
 
     const radiusMeters = 25;
     const earthRadius = 6371000;
