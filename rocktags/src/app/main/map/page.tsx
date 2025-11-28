@@ -71,30 +71,35 @@ export default function MapPage() {
         const locations = await fetchTrackerLocations(trackerRequests);
 
         console.log("📍 Received tracker locations:", locations);
+        console.log("📊 Locations object keys:", Object.keys(locations));
 
         // Check if we got any real-time data
         if (Object.keys(locations).length === 0) {
-          console.warn("⚠️ No tracker data received - using static cat positions from campus-data.json");
-        } else {
-          // Update cat positions with real-time data
-          setData((prevData) => ({
-            ...prevData,
-            cats: prevData.cats.map((cat) => {
-              const trackerData = locations[cat.name];
-              if (trackerData) {
-                console.log(`✅ Updating ${cat.name} to:`, trackerData);
-                return {
-                  ...cat,
-                  lat: trackerData.latitude,
-                  lng: trackerData.longitude,
-                  lastUpdated: trackerData.timestamp,
-                  isRealTime: true,
-                };
-              }
-              return cat;
-            }),
-          }));
+          console.warn("⚠️ No tracker data received - keeping static cat positions from campus-data.json");
+          // Don't update - keep the existing cat positions
+          return;
         }
+
+        // Update cat positions with real-time data only if we got data
+        setData((prevData) => ({
+          ...prevData,
+          cats: prevData.cats.map((cat) => {
+            const trackerData = locations[cat.name];
+            if (trackerData) {
+              console.log(`✅ Updating ${cat.name} to:`, trackerData);
+              return {
+                ...cat,
+                lat: trackerData.latitude,
+                lng: trackerData.longitude,
+                lastUpdated: trackerData.timestamp,
+                isRealTime: true,
+              };
+            }
+            // Keep the cat's current position if no tracker data for it
+            console.log(`⚠️ No real-time data for ${cat.name}, keeping current position`);
+            return cat;
+          }),
+        }));
       } catch (err) {
         console.error("⚠️ Failed to update tracker locations:", err);
         console.warn("⚠️ Using static cat positions from campus-data.json");
