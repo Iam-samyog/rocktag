@@ -51,11 +51,16 @@ export default function MapPage() {
         const trackerRequests = buildTrackerRequests(data.cats);
         
         if (trackerRequests.length === 0) {
-          console.log("No cats with private keys configured for real-time tracking");
+          console.log("⚠️ No cats with private keys configured for real-time tracking");
           return;
         }
 
         console.log("🔄 Updating tracker locations for:", trackerRequests);
+        console.log("📊 Tracker details:", {
+          count: trackerRequests.length,
+          names: trackerRequests.map(t => t.name),
+          keys: trackerRequests.map(t => t.privateKey?.substring(0, 10) + "..."),
+        });
 
         // Fetch real-time locations from backend
         const locations = await fetchTrackerLocations(trackerRequests);
@@ -81,7 +86,8 @@ export default function MapPage() {
           }),
         }));
       } catch (err) {
-        console.error("Failed to update tracker locations, using static data:", err);
+        console.error("❌ Failed to update tracker locations:", err);
+        console.warn("⚠️ Using static cat positions from campus-data.json");
         // Don't break the map - just keep using the current cat positions
       } finally {
         setIsUpdatingLocations(false);
