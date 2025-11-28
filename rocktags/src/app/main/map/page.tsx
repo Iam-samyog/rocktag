@@ -129,7 +129,7 @@ export default function MapPage() {
         <div className="bg-white rounded-2xl shadow-lg p-6">
           {isUpdatingLocations && (
             <div className="text-sm text-gray-500 mb-2">
-              🔄 Updating real-time tracker locations...
+              🔄 Updating real-time cats locations...
             </div>
           )}
           <div className="h-[72vh] rounded-xl overflow-hidden border-2 border-[#E2C3A7]/20">
