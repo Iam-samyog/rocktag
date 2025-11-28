@@ -45,7 +45,7 @@ export async function fetchTrackerLocations(
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ trackers }),
+      body: JSON.stringify(trackers),
       signal: controller.signal,
     });
 

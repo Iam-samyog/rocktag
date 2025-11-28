@@ -6,10 +6,10 @@
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("Received tracker request:", body);
+    console.log("Received tracker request body:", body);
 
-    // Extract trackers array from the request body
-    const trackers = body.trackers || [];
+    // Body should be the trackers array directly
+    const trackers = Array.isArray(body) ? body : body.trackers || [];
     console.log("Forwarding trackers to backend:", trackers);
 
     const response = await fetch(
