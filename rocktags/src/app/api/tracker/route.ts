@@ -2,15 +2,22 @@
  * API Route: Proxy for Tracker API
  * This acts as a bridge between frontend and backend to handle CORS issues
  * 
+ * NOTE: Private keys are stored here server-side only
  * NOTE: If backend returns 500 error, the cat will display at static position
  */
+
+// Server-side tracker configuration with private keys
+// These keys NEVER reach the client
+const TRACKER_KEYS: Record<string, string> = {
+  cat1: process.env.CAT1_TRACKER_KEY || "E5kjUrGAdT6kP2tRie73RbABIrRRNJICu0fwWg==",
+};
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     console.log("📤 Received tracker request");
 
-    // Expected format: { trackers: [...] }
+    // Expected format: { trackers: [...] } with cat names
     let trackers: any[] = [];
     
     if (Array.isArray(body)) {
@@ -25,19 +32,31 @@ export async function POST(request: Request) {
     
     console.log("📤 Trackers count:", trackers.length);
     if (trackers.length > 0) {
-      // Don't log sensitive privateKey data
       console.log("📤 Tracker names:", trackers.map((t: any) => t.name));
     }
+
+    // Inject private keys server-side (client never sees them)
+    const trackersWithKeys = trackers.map((t: any) => ({
+      name: t.name,
+      privateKey: TRACKER_KEYS[t.name],
+    })).filter((t: any) => t.privateKey); // Only include trackers we have keys for
+
+    if (trackersWithKeys.length === 0) {
+      console.warn("⚠️ No trackers with configured keys");
+      return Response.json({}, { status: 200 });
+    }
+
+    console.log("📤 Prepared", trackersWithKeys.length, "tracker(s) with keys for backend");
 
     const backendUrl = process.env.NEXT_PUBLIC_TRACKER_API_URL || 
       "https://rocktags-backend-147809513475.us-south1.run.app/findmy/";
     
     console.log("📡 Forwarding to backend:", backendUrl);
     
-    // Send in the correct format: { trackers: [...] }
-    const requestBody = { trackers };
-    // Don't log the full request body as it contains sensitive privateKey
-    console.log("📤 Sending request with", trackers.length, "tracker(s)");
+    // Send in the correct format: { trackers: [...] } with private keys
+    const requestBody = { trackers: trackersWithKeys };
+    // Don't log the full request body as it contains privateKeys
+    console.log("📤 Sending request with", trackersWithKeys.length, "tracker(s)");
 
     const response = await fetch(backendUrl, {
       method: "POST",

@@ -11,7 +11,7 @@ const TRACKER_TIMEOUT =
 
 export interface TrackerRequest {
   name: string;
-  privateKey: string;
+  // privateKey is now stored server-side only
 }
 
 export interface TrackerLocation {
@@ -92,13 +92,11 @@ export async function fetchTrackerLocations(
 
 /**
  * Build tracker requests from cat data
- * You'll need to get privateKey from your database or config
+ * Note: privateKey is now stored server-side only, never sent from client
  */
-export function buildTrackerRequests(cats: Array<{ name: string; privateKey?: string }>): TrackerRequest[] {
-  return cats
-    .filter((cat) => cat.privateKey) // Only include cats with private keys
-    .map((cat) => ({
-      name: cat.name,
-      privateKey: cat.privateKey!,
-    }));
+export function buildTrackerRequests(cats: Array<{ name: string }>): TrackerRequest[] {
+  return cats.map((cat) => ({
+    name: cat.name,
+    // privateKey is injected server-side in the API route
+  }));
 }
