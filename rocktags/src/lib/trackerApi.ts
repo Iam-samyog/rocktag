@@ -35,11 +35,13 @@ export async function fetchTrackerLocations(
 ): Promise<TrackerResponse> {
   try {
     console.log("🔄 Fetching tracker locations from:", TRACKER_API_URL);
-    console.log("📋 Sending trackers:", trackers);
     console.log("📋 Trackers count:", trackers.length);
-    console.log("📋 First tracker:", trackers[0]);
+    console.log("📋 Tracker names:", trackers.map(t => t.name));
+    // Don't log privateKey - it's sensitive data
+
     const requestBody = { trackers };
-    console.log("📋 Request body will be:", JSON.stringify(requestBody));
+    // Don't log full request body as it contains sensitive privateKey
+    console.log("📋 Sending request with", trackers.length, "tracker(s)");
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), TRACKER_TIMEOUT);

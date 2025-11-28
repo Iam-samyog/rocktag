@@ -8,11 +8,10 @@
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    console.log("📤 Received tracker request body:", body);
-    console.log("📤 Body type:", Array.isArray(body) ? "array" : typeof body);
+    console.log("📤 Received tracker request");
 
     // Expected format: { trackers: [...] }
-    let trackers = [];
+    let trackers: any[] = [];
     
     if (Array.isArray(body)) {
       // If we received just an array, wrap it
@@ -24,10 +23,10 @@ export async function POST(request: Request) {
       console.log("📤 Using trackers from body.trackers");
     }
     
-    console.log("📤 Extracted trackers:", trackers);
     console.log("📤 Trackers count:", trackers.length);
     if (trackers.length > 0) {
-      console.log("📤 First tracker:", trackers[0]);
+      // Don't log sensitive privateKey data
+      console.log("📤 Tracker names:", trackers.map((t: any) => t.name));
     }
 
     const backendUrl = process.env.NEXT_PUBLIC_TRACKER_API_URL || 
@@ -37,7 +36,8 @@ export async function POST(request: Request) {
     
     // Send in the correct format: { trackers: [...] }
     const requestBody = { trackers };
-    console.log("📤 Request body being sent:", JSON.stringify(requestBody));
+    // Don't log the full request body as it contains sensitive privateKey
+    console.log("📤 Sending request with", trackers.length, "tracker(s)");
 
     const response = await fetch(backendUrl, {
       method: "POST",
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json();
-    console.log("✅ Backend response data:", data);
+    console.log("✅ Backend response received");
     return Response.json(data);
   } catch (error) {
     console.error("⚠️ Proxy error:", error);

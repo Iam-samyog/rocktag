@@ -64,7 +64,6 @@ export default function MapPage() {
         console.log("📊 Tracker details:", {
           count: trackerRequests.length,
           names: trackerRequests.map(t => t.name),
-          keys: trackerRequests.map(t => t.privateKey?.substring(0, 10) + "..."),
         });
 
         // Fetch real-time locations from backend
