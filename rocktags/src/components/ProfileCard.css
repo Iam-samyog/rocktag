@@ -1,0 +1,422 @@
+/*
+  ProfileCard.css - Corrected and Un-nested Styles
+  Note: @import and body styles should typically go into a main index.css file,
+  but are included here for completeness based on the original file content.
+*/
+@import url("https://fonts.googleapis.com/css?family=DM+Sans:400,500|Jost:400,500,600&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+/* Base Card Styles */
+.card {
+  max-width: 650px;
+  margin: auto;
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  transition: 0.3s;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+  height: auto;
+}
+
+.card::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Explicit border-card variant requested by user (keeps card appearance when outer wrapper removed) */
+.border-card {
+  max-width: 650px;
+  margin: auto;
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none; /* IE and Edge */
+  position: relative;
+  z-index: 1;
+  background-color: rgba(255, 255, 255, 1);
+  display: flex;
+  transition: 0.3s;
+  flex-direction: column;
+  border-radius: 10px;
+  /* User-requested white halo ring */
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2);
+  height: auto;
+}
+
+.border-card::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Hide scrollbar for all elements within the card */
+.card *::-webkit-scrollbar,
+.border-card *::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.card *,
+.border-card * {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Hide scrollbar for the sidebar container */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Card state dimensions */
+.card[data-state="#about"] {
+  height: auto;
+  min-height: 450px;
+  max-height: 600px;
+}
+.card[data-state="#about"] .card-main {
+  padding-top: 0;
+}
+
+.card[data-state="#rubplace"] {
+  height: auto;
+  min-height: 400px;
+  max-height: 500px;
+}
+
+.card[data-state="#demand"] {
+  height: auto;
+  min-height: 450px;
+  max-height: 600px;
+}
+
+/* Minimized Header/Active card state styles (UN-NESTED & GAP FIXED) */
+.card.is-active .card-header {
+  height: 80px;
+}
+.card.is-active .card-cover {
+  height: 100px;
+  top: -50px;
+}
+.card.is-active .card-avatar {
+  transform: none;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  bottom: 10px;
+}
+
+/* --- Name/Title FIX: Increased gap between "Mr. Kitten" and "I love to sleep" --- */
+.card.is-active .card-fullname,
+.card.is-active .card-jobtitle {
+  left: 86px;
+  transform: none;
+}
+.card.is-active .card-fullname {
+  bottom: 25px; /* Pushed up */
+  font-size: 19px;
+}
+.card.is-active .card-jobtitle {
+  bottom: 5px; /* Pushed down (was 16px) */
+  letter-spacing: 1px;
+  font-size: 10px;
+}
+/* --------------------------------------------------------------------------------- */
+
+/* Header elements */
+.card-header {
+  position: relative;
+  display: flex;
+  height: 200px;
+  flex-shrink: 0;
+  width: 100%;
+  transition: 0.3s;
+}
+.card-header * {
+  transition: 0.3s;
+}
+
+.card-cover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  height: 160px;
+  top: -20%;
+  left: 0;
+  will-change: top;
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px);
+  transform: scale(1.2);
+  transition: 0.5s;
+}
+
+.card-avatar {
+  width: 100px;
+  height: 100px;
+  box-shadow: 0 8px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  object-position: center;
+  object-fit: cover;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-64px);
+}
+
+/* Default state name positioning (GAP FIX) */
+.card-fullname {
+  position: absolute;
+  bottom: 0;
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  transform: translateY(-20px) translateX(-50%); /* Changed -10px to -20px */
+  left: 50%;
+}
+
+.card-jobtitle {
+  position: absolute;
+  bottom: 0;
+  font-size: 11px;
+  white-space: nowrap;
+  font-weight: 500;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px); /* Changed -7px to 5px */
+}
+
+.card-main::-webkit-scrollbar {
+  display: none;
+}
+/* Main Content Area (FIXED FOOTER PADDING) */
+.card-main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  padding-top: 15px;
+  flex-direction: column;
+  overflow: hidden;
+  /* CRITICAL: Add padding to clear the fixed menu bar */
+  padding-bottom: 65px;
+}
+
+.card-subtitle {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.card-content {
+  padding: 20px 25px;
+}
+
+.card-desc {
+  line-height: 1.6;
+  color: #636b6f;
+  font-size: 14px;
+  margin: 0;
+  font-weight: 400;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* Social links styles */
+
+/* Footer Menu/Buttons (POSITION FIXED) */
+.card-buttons {
+  display: flex;
+  background-color: #fff;
+  margin-top: auto;
+  position: absolute;
+
+  bottom: 0;
+  left: 0;
+  width: 100%;
+
+  z-index: 10;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.card-buttons button {
+  flex: 1 1 auto;
+  user-select: none;
+  background: 0;
+  font-size: 13px;
+  border: 0;
+  padding: 15px 5px;
+  cursor: pointer;
+  color: #5c5c6d;
+  transition: 0.3s;
+  font-family: "Jost", sans-serif;
+  font-weight: 500;
+  outline: 0;
+  border-bottom: 3px solid transparent;
+}
+.card-buttons button.is-active,
+.card-buttons button:hover {
+  color: #2b2c48;
+  border-bottom: 3px solid #8a84ff;
+  background: linear-gradient(
+    to bottom,
+    rgba(127, 199, 231, 0) 0%,
+    rgba(207, 204, 255, 0.2) 44%,
+    rgba(211, 226, 255, 0.4) 100%
+  );
+}
+
+/* Section display */
+.card-section {
+  display: none;
+}
+.card-section.is-active {
+  display: block;
+  animation: fadeIn 0.6s both;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translatey(40px);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Timeline/Demand (RECOMMENDED SNACKS) styles */
+.card-timeline {
+  margin-top: 30px;
+  position: relative;
+}
+.card-timeline:after {
+  background: linear-gradient(
+    to top,
+    rgba(134, 214, 243, 0) 0%,
+    rgba(81, 106, 204, 1) 100%
+  );
+  content: "";
+  left: 42px;
+  width: 2px;
+  top: 0;
+  height: 100%;
+  position: absolute;
+}
+
+.card-item {
+  position: relative;
+  padding-left: 60px;
+  padding-right: 20px;
+  padding-bottom: 30px;
+  z-index: 1;
+}
+.card-item:last-child {
+  padding-bottom: 5px;
+}
+.card-item:after {
+  content: attr(data-year);
+  width: 10px;
+  position: absolute;
+  top: 0;
+  left: 37px;
+  width: 8px;
+  height: 8px;
+  line-height: 0.6;
+  border: 2px solid #fff;
+  font-size: 11px;
+  text-indent: -35px;
+  border-radius: 50%;
+  color: rgba(134, 134, 134, 0.7); /* Adjusted for pure CSS */
+  background: linear-gradient(
+    to bottom,
+    rgb(128, 147, 224) 0%,
+    /* Adjusted for pure CSS */ #516acc 100%
+  );
+}
+
+.card-item-title {
+  font-weight: 500;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.card-item-desc {
+  font-size: 13px;
+  color: #6f6f7b;
+  line-height: 1.5;
+  font-family: "DM Sans", sans-serif;
+}
+
+/* rubplace (RUB PLACE) styles */
+.card-rubplace-wrapper {
+  margin-top: 20px;
+}
+
+.card-rubplace {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #6f6f7b;
+  font-family: "DM Sans", sans-serif;
+  line-height: 1.6;
+  cursor: pointer;
+}
+.card-rubplace + .card-rubplace {
+  margin-top: 16px;
+}
+.card-rubplace svg,
+.card-rubplace img {
+  flex-shrink: 0;
+  width: 30px;
+  min-height: 34px;
+  height: 30px;
+  object-fit: contain;
+  margin-right: 12px;
+  transition: 0.3s;
+  padding-right: 12px;
+  border-right: 1px solid #dfe2ec;
+}
+
+/* rubplace Me Button (if used) */
+.rubplace-me {
+  border: 0;
+  outline: none;
+  background: linear-gradient(
+    to right,
+    rgba(83, 200, 239, 0.8) 0%,
+    rgba(81, 106, 204, 0.8) 96%
+  );
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  color: #fff;
+  padding: 12px 16px;
+  width: 100%;
+  border-radius: 5px;
+  margin-top: 25px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Jost", sans-serif;
+  transition: 0.3s;
+}
