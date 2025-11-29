@@ -2,9 +2,30 @@
  * API Route: Proxy for Tracker API
  * This acts as a bridge between frontend and backend to handle CORS issues
  * 
+ * Features:
+ * - Request validation with Zod
+ * - Rate limiting awareness
+ * - Graceful error handling
+ * 
  * NOTE: Private keys are stored here server-side only
  * NOTE: If backend returns 500 error, the cat will display at static position
  */
+
+import { z } from 'zod';
+
+// Validation schemas
+const TrackerRequestSchema = z.object({
+  name: z.string()
+    .min(1, "Tracker name cannot be empty")
+    .max(50, "Tracker name too long")
+    .regex(/^[a-zA-Z0-9_-]+$/, "Tracker name contains invalid characters"),
+});
+
+const RequestBodySchema = z.object({
+  trackers: z.array(TrackerRequestSchema)
+    .min(1, "At least one tracker required")
+    .max(50, "Too many trackers requested"),
+});
 
 // Server-side tracker configuration with private keys
 // These keys NEVER reach the client
@@ -17,29 +38,36 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("📤 Received tracker request");
 
-    // Expected format: { trackers: [...] } with cat names
-    let trackers: any[] = [];
-    
-    if (Array.isArray(body)) {
-      // If we received just an array, wrap it
-      trackers = body;
-      console.log("📤 Wrapped array as trackers");
-    } else if (body.trackers && Array.isArray(body.trackers)) {
-      // If we received { trackers: [...] }, use it as is
-      trackers = body.trackers;
-      console.log("📤 Using trackers from body.trackers");
-    }
-    
-    console.log("📤 Trackers count:", trackers.length);
-    if (trackers.length > 0) {
-      console.log("📤 Tracker names:", trackers.map((t: any) => t.name));
+    // Validate request body
+    let validatedBody: z.infer<typeof RequestBodySchema>;
+    try {
+      validatedBody = RequestBodySchema.parse(body);
+      console.log("✅ Request validation passed");
+    } catch (validationError) {
+      if (validationError instanceof z.ZodError) {
+        console.warn("⚠️ Request validation failed:", validationError.issues);
+        return Response.json(
+          { 
+            error: "Invalid request format",
+            details: validationError.issues 
+          },
+          { status: 400 }
+        );
+      }
+      throw validationError;
     }
 
+    const trackers = validatedBody.trackers;
+    console.log("📤 Trackers count:", trackers.length);
+    console.log("📤 Tracker names:", trackers.map((t) => t.name));
+
     // Inject private keys server-side (client never sees them)
-    const trackersWithKeys = trackers.map((t: any) => ({
-      name: t.name,
-      privateKey: TRACKER_KEYS[t.name],
-    })).filter((t: any) => t.privateKey); // Only include trackers we have keys for
+    const trackersWithKeys = trackers
+      .map((t) => ({
+        name: t.name,
+        privateKey: TRACKER_KEYS[t.name],
+      }))
+      .filter((t): t is { name: string; privateKey: string } => Boolean(t.privateKey)); // Only include trackers we have keys for
 
     if (trackersWithKeys.length === 0) {
       console.warn("⚠️ No trackers with configured keys");
