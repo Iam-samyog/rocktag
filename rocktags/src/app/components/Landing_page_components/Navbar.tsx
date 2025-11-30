@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Cat, Sparkles, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Cat, Sparkles, Menu, X, Map, LogOut } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faInfoCircle,
@@ -14,28 +14,31 @@ import { auth } from "@/config/firebase";
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<any>(null);
 
   // Hide admin button on landing page
   const isLandingPage = pathname === "/";
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      setIsAuthenticated(!!user);
+    const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
+      setUser(currentUser);
+      setIsAuthenticated(!!currentUser);
       setAuthChecked(true);
 
-      if (user && user.email) {
+      if (currentUser && currentUser.email) {
         try {
           const response = await fetch("/api/users");
           if (response.ok) {
             const usersData = await response.json();
-            const currentUser = usersData.find(
-              (u: any) => u.email === user.email
+            const currentUserData = usersData.find(
+              (u: any) => u.email === currentUser.email
             );
-            setIsAdmin(currentUser?.role === "Admin");
+            setIsAdmin(currentUserData?.role === "Admin");
           }
         } catch (error) {
           console.error("Error checking admin role:", error);
@@ -46,6 +49,16 @@ export function Navbar() {
     });
     return () => unsubscribe();
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setIsOpen(false);
+      router.push("/");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   return (
     <nav className="py-5 fixed inset-x-0 top-0 z-50 bg-gradient-to-br from-[#3d1f0f] to-[#2a1508] backdrop-blur-md border-b border-white/10">
@@ -88,6 +101,28 @@ export function Navbar() {
               <span className="font-medium">Admin Dashboard</span>
             </Link>
           )}
+
+          {/* Maps link - only when logged in */}
+          {authChecked && isAuthenticated && (
+            <Link
+              href="/main/map"
+              className="flex items-center space-x-2 hover:text-[#847570] transition-all duration-300 hover:scale-105"
+            >
+              <Map className="w-5 h-5" />
+              <span className="font-medium">Maps</span>
+            </Link>
+          )}
+
+          {/* Logout button - only when logged in */}
+          {authChecked && isAuthenticated && (
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 px-6 py-2 rounded-lg bg-[#847570] hover:bg-[#6B5D59] text-white font-medium transition-all duration-300 hover:shadow-lg hover:scale-105 hover:shadow-[#847570]/50"
+            >
+              <LogOut className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+              <span>Logout</span>
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Toggle Button */}
@@ -107,7 +142,7 @@ export function Navbar() {
       {/* Mobile Menu Dropdown */}
       <div
         className={`md:hidden transition-all duration-300 ease-in-out overflow-hidden ${
-          isOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div className="px-4 py-6 space-y-4 bg-[#2a1508]/95 backdrop-blur-sm border-t border-white/10">
@@ -138,6 +173,32 @@ export function Navbar() {
               <FontAwesomeIcon icon={faGauge} className="w-5 h-5" />
               <span className="font-medium">Admin Dashboard</span>
             </Link>
+          )}
+
+          {/* Maps link - mobile */}
+          {authChecked && isAuthenticated && (
+            <Link
+              href="/main/map"
+              onClick={() => setIsOpen(false)}
+              className="flex items-center space-x-3 text-white hover:text-[#847570] transition-all duration-200 hover:pl-2"
+            >
+              <Map className="w-5 h-5" />
+              <span className="font-medium">Maps</span>
+            </Link>
+          )}
+
+          {/* Logout button - mobile, only when logged in */}
+          {authChecked && isAuthenticated && (
+            <button
+              onClick={() => {
+                handleLogout();
+                setIsOpen(false);
+              }}
+              className="w-full flex items-center justify-start space-x-2 px-4 py-2 rounded-lg bg-[#847570] hover:bg-[#6B5D59] transition-all duration-300 text-white font-medium hover:shadow-lg hover:shadow-[#847570]/50"
+            >
+              <LogOut className="w-4 h-4 transition-transform duration-300 hover:translate-x-1" />
+              <span>Logout</span>
+            </button>
           )}
         </div>
       </div>
