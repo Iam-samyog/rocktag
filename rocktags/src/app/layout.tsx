@@ -50,6 +50,7 @@ export default function RootLayout({
           font-body          /* ← DEFAULT: Roboto */
           antialiased
         `}
+        suppressHydrationWarning
       >
         {children}
         <GoogleMapsLoader />

@@ -12,6 +12,9 @@ export interface Cat {
   bio: string;
   sightings: number;
   bestTime: string;
+  privateKey?: string; // For real-time tracking
+  isRealTime?: boolean; // Flag to indicate if using real-time data
+  lastUpdated?: string; // Timestamp of last location update
 }
 
 export interface Building {
