@@ -27,14 +27,15 @@
   ],
   "buildings": [
     { "name": "E.H. Hereford University Center", "abbr": "UC", "lat": 32.7315, "lng": -97.1108, "priority": 1 },
-    { "name": "Central Library", "abbr": "LIBR", "lat": 32.7297, "lng": -97.1129, "priority": 1 },
+    { "name": "Central Library", "abbr": "LIBR", "lat": 32.72978961090168, "lng":-97.11285593393748, "priority": 1 },
     { "name": "Maverick Stadium", "abbr": "STAD", "lat": 32.7368, "lng": -97.1220, "priority": 1 },
-    { "name": "Engineering Research Building", "abbr": "ERB", "lat": 32.7321, "lng": -97.1142, "priority": 1 },
-    { "name": "Science Hall", "abbr": "SH", "lat": 32.7316, "lng": -97.1118, "priority": 2 },
-    { "name": "College of Business", "abbr": "COB", "lat": 32.7306, "lng": -97.1120, "priority": 1 },
-    { "name": "College of Nursing", "abbr": "CONHI", "lat": 32.7294, "lng": -97.1118, "priority": 2 },
-    { "name": "Fine Arts Building", "abbr": "FAB", "lat": 32.7327, "lng": -97.1089, "priority": 1 },
-    { "name": "Architecture Building", "abbr": "ARCH", "lat": 32.7305, "lng": -97.1105, "priority": 2 },
-    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.7313, "lng": -97.1145, "priority": 1 }
+    { "name": "Engineering Research Building", "abbr": "ERB", "lat":32.73344617226117, "lng": -97.11306809268679, "priority": 1 },
+    { "name": "Science Hall", "abbr": "SH", "lat": 32.73051345590073, "lng": -97.11365950929573, "priority": 2 },
+    { "name": "College of Business", "abbr": "COBA", "lat": 32.72987812652809, "lng":-97.11060168441837, "priority": 1 },
+    { "name": "Nedderman Hall", "abbr": "NH", "lat": 32.732366533055455, "lng":-97.11383281359983, "priority": 2 },
+    { "name": "University Hall ", "abbr": "UH", "lat": 32.729048056139256, "lng":-97.11418575601961, "priority": 1 },
+    { "name": "Pickard Hall", "abbr": "PKH", "lat": 32.728984571706235, "lng":-97.11151121687269, "priority": 2 },
+    { "name": "Planetarium", "abbr": "PLAN", "lat": 32.73043880807829, "lng":  -97.11215543963712, "priority": 1 },
+    { "name": "Woolf Hall", "abbr": "WH", "lat": 32.73147497494538, "lng":-97.11261150555701, "priority": 1 }
   ]
 }
