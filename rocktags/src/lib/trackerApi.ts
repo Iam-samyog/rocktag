@@ -6,6 +6,7 @@
  * - Request caching (5-second TTL)
  * - Retry logic with exponential backoff
  * - Timeout protection
+ * - Bounds validation (checks if location is within UTA campus)
  */
 
 // Use the local API proxy to avoid CORS issues
@@ -13,6 +14,37 @@ const TRACKER_API_URL = "/api/tracker";
 
 const TRACKER_TIMEOUT = 
   parseInt(process.env.NEXT_PUBLIC_TRACKER_TIMEOUT || "10000");
+
+// UTA Campus Bounds (approximate geofence around UTA Arlington campus)
+// These values are based on the coordinates in campus-data.json
+const UTA_BOUNDS = {
+  minLat: 32.7270,  // South boundary
+  maxLat: 32.7400,  // North boundary
+  minLng: -97.1250, // West boundary
+  maxLng: -97.1050, // East boundary
+};
+
+/**
+ * Validate if a location is within UTA campus bounds
+ * @param lat - Latitude
+ * @param lng - Longitude
+ * @returns true if location is within bounds, false otherwise
+ */
+function isWithinUTABounds(lat: number, lng: number): boolean {
+  const isValid =
+    lat >= UTA_BOUNDS.minLat &&
+    lat <= UTA_BOUNDS.maxLat &&
+    lng >= UTA_BOUNDS.minLng &&
+    lng <= UTA_BOUNDS.maxLng;
+  
+  if (!isValid) {
+    console.warn(
+      `📍 Location out of bounds: (${lat}, ${lng}). Expected within UTA campus bounds.`
+    );
+  }
+  
+  return isValid;
+}
 
 // Cache configuration
 const CACHE_DURATION = 5000; // 5 seconds
@@ -196,11 +228,28 @@ async function fetchTrackerLocationsOnce(
     const data = await response.json();
     console.log("✅ Tracker API response:", data);
     
-    if (Object.keys(data).length === 0) {
-      console.warn("⚠️ Backend returned empty response - using static cat positions");
+    // Validate each location is within UTA bounds
+    const validatedData: TrackerResponse = {};
+    
+    Object.entries(data).forEach(([catName, location]) => {
+      const trackerLoc = location as TrackerLocation;
+      
+      if (isWithinUTABounds(trackerLoc.latitude, trackerLoc.longitude)) {
+        validatedData[catName] = trackerLoc;
+        console.log(`✅ ${catName} location valid and within UTA bounds`);
+      } else {
+        console.warn(
+          `⚠️ ${catName} location out of bounds (${trackerLoc.latitude}, ${trackerLoc.longitude}) - using static position`
+        );
+        // Location is out of bounds, don't include it - static position will be used
+      }
+    });
+    
+    if (Object.keys(validatedData).length === 0) {
+      console.warn("⚠️ No valid tracker locations - backend may be down or sending invalid data. Using static cat positions");
     }
     
-    return data;
+    return validatedData;
   } finally {
     clearTimeout(timeoutId);
   }
