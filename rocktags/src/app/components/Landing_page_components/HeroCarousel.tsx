@@ -150,7 +150,7 @@ export function HeroCarousel() {
       <div className="relative z-20 text-center max-w-5xl mx-auto px-6">
         <h1 className=" !text-[#ffff] text-5xl sm:text-6xl md:text-7xl font-bold font-heading text-white mb-4 leading-tight drop-shadow-lg">
           Track Campus Cats
-          <span className="block text-[#E2C3A7] mt-2 drop-shadow-md leading-[50px]">with Meowvrick</span>
+          <span className="block text-[#E2C3A7] mt-2 drop-shadow-md leading-[50px]">with Meowvricks</span>
         </h1>
         <p className="text-lg sm:text-xl md:text-2xl mb-10 text-white/90 font-body max-w-3xl mx-auto leading-relaxed">
           Discover, follow, and connect with UTA’s beloved feline residents
