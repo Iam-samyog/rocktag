@@ -31,19 +31,12 @@ const UTA_BOUNDS = {
  * @returns true if location is within bounds, false otherwise
  */
 function isWithinUTABounds(lat: number, lng: number): boolean {
-  const isValid =
+  return (
     lat >= UTA_BOUNDS.minLat &&
     lat <= UTA_BOUNDS.maxLat &&
     lng >= UTA_BOUNDS.minLng &&
-    lng <= UTA_BOUNDS.maxLng;
-  
-  if (!isValid) {
-    console.warn(
-      `📍 Location out of bounds: (${lat}, ${lng}). Expected within UTA campus bounds.`
-    );
-  }
-  
-  return isValid;
+    lng <= UTA_BOUNDS.maxLng
+  );
 }
 
 // Cache configuration

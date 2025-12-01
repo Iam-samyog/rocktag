@@ -1,5 +1,3 @@
-"use cache";
-
 export async function getCatSnacks(catId: string): Promise<string[]> {
   // Mock data - replace with actual API call
   const mockData: Record<string, string[]> = {

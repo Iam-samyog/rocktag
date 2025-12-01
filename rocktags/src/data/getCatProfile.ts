@@ -1,5 +1,3 @@
-"use cache";
-
 import { DEFAULT_CAT_IMAGE } from "./constants";
 
 export type CatProfile = {
