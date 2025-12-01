@@ -68,7 +68,7 @@ export function Navbar() {
         <Link href="/" className="pt-3">
          
              <img 
-              src="/image/svgviewer-output (1).svg"
+              src="/image/Logo.svg"
               alt="Meowvrick Logo"
               
               className="w-50 h-50 hover:opacity-80 transition-opacity"
