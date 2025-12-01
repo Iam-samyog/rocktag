@@ -161,7 +161,7 @@ export function HeroCarousel() {
           {/* Sign In */}
           <Button
             size="lg"
-            onClick={() => router.push(isLoggedIn ? "/signup" : "/signin")}
+            onClick={() => router.push(isLoggedIn ? "/main/map" : "/signin")}
             className="bg-[#4E2A17] hover:bg-[#3d1f0f] text-white font-bold px-8 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             <LogIn className="w-5 h-5 mr-2" /> Sign In
