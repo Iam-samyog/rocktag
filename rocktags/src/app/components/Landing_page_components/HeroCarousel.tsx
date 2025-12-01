@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight, LogIn, UserPlus } from "lucide-react";
 import { Button } from "./ui/button";
 import { ButtonGroup, ButtonGroupSeparator } from "./ui/button-group";
+import { auth } from "@/config/firebase";
 
 const catSlides = [
   { src: "/image/Home1.jpg", alt: "Cat playing with toys" },
@@ -22,6 +23,14 @@ export function HeroCarousel() {
   const [animating, setAnimating] = useState(false);
   const [displayedTitle, setDisplayedTitle] = useState("");
   const [displayedSubtitle, setDisplayedSubtitle] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      setIsLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -152,7 +161,7 @@ export function HeroCarousel() {
           {/* Sign In */}
           <Button
             size="lg"
-            onClick={() => router.push("/signin")}
+            onClick={() => router.push(isLoggedIn ? "/signup" : "/signin")}
             className="bg-[#4E2A17] hover:bg-[#3d1f0f] text-white font-bold px-8 py-6 rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300"
           >
             <LogIn className="w-5 h-5 mr-2" /> Sign In
