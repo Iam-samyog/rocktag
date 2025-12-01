@@ -291,6 +291,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
     console.log("📍 Cats to display:", cats.length);
     console.log("🏢 Buildings to display:", buildings.length);
     
+    // Only clear building markers, not cat markers (they persist for animation)
     markersRef.current.forEach(m => m.setMap(null));
     markersRef.current = [];
 
