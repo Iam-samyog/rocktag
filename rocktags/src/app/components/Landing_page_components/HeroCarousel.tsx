@@ -8,15 +8,20 @@ import { Button } from "./ui/button";
 import { ButtonGroup, ButtonGroupSeparator } from "./ui/button-group";
 
 const catSlides = [
-  { src: "", alt: "Cat playing with toys" },
-  { src: "", alt: "Cat sleeping in sunbath" },
-  { src: "", alt: "Cat running on campus" },
+  { src: "/image/Home1.jpg", alt: "Cat playing with toys" },
+  { src: "/image/Home2.jpg", alt: "Cat sleeping in sunbath" },
+  { src: "/image/Home3.jpg", alt: "Cat running on campus" },
 ];
+
+const TITLE_TEXT = "Track Campus Cats";
+const SUBTITLE_TEXT = "Discover, follow, and connect with UTA's beloved feline residents";
 
 export function HeroCarousel() {
   const router = useRouter();
   const [slide, setSlide] = useState(0);
   const [animating, setAnimating] = useState(false);
+  const [displayedTitle, setDisplayedTitle] = useState("");
+  const [displayedSubtitle, setDisplayedSubtitle] = useState("");
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -24,6 +29,42 @@ export function HeroCarousel() {
     }, 5000);
     return () => clearInterval(id);
   }, []);
+
+  // Typing animation for title
+  useEffect(() => {
+    setDisplayedTitle("");
+    let index = 0;
+    const startDelay = setTimeout(() => {
+      const typingInterval = setInterval(() => {
+        if (index < TITLE_TEXT.length) {
+          setDisplayedTitle(TITLE_TEXT.substring(0, index + 1));
+          index++;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, 60);
+      return () => clearInterval(typingInterval);
+    }, 300);
+    return () => clearTimeout(startDelay);
+  }, [slide]);
+
+  // Typing animation for subtitle
+  useEffect(() => {
+    setDisplayedSubtitle("");
+    let index = 0;
+    const startDelay = setTimeout(() => {
+      const typingInterval = setInterval(() => {
+        if (index < SUBTITLE_TEXT.length) {
+          setDisplayedSubtitle(SUBTITLE_TEXT.substring(0, index + 1));
+          index++;
+        } else {
+          clearInterval(typingInterval);
+        }
+      }, 30);
+      return () => clearInterval(typingInterval);
+    }, 800);
+    return () => clearTimeout(startDelay);
+  }, [slide]);
 
   const goPrev = () => {
     if (animating) return;
@@ -98,7 +139,7 @@ export function HeroCarousel() {
 
       {/* Content – PERFECTLY CENTERED */}
       <div className="relative z-20 text-center max-w-5xl mx-auto px-6">
-        <h1 className="  text-5xl sm:text-6xl md:text-7xl font-bold font-heading text-white mb-4 leading-tight drop-shadow-lg">
+        <h1 className=" !text-[#ffff] text-5xl sm:text-6xl md:text-7xl font-bold font-heading text-white mb-4 leading-tight drop-shadow-lg">
           Track Campus Cats
           <span className="block text-[#E2C3A7] mt-2 drop-shadow-md leading-[50px]">with Meowvrick</span>
         </h1>
