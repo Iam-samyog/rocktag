@@ -11,6 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useState, useEffect } from "react";
 import { auth } from "@/config/firebase";
+import Image from "next/image";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -64,14 +65,15 @@ export function Navbar() {
     <nav className="py-5 fixed inset-x-0 top-0 z-50 bg-gradient-to-br from-[#3d1f0f] to-[#2a1508] backdrop-blur-md border-b border-white/10">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
         {/* LOGO – CLICKABLE → HOME PAGE */}
-        <Link href="/" className="flex items-center space-x-2 group">
-          <div className="relative">
-            <Cat className="w-8 h-8 text-white animate-pulse group-hover:text-[#847570] transition-colors" />
-            <Sparkles className="w-4 h-4 text-[#847570] absolute -top-1 -right-1" />
-          </div>
-          <span className="text-4xl font-bold font-['Poppins'] tracking-tight text-white group-hover:text-[#847570] transition-colors">
-            Meowvrick
-          </span>
+        <Link href="/" className="pt-3">
+         
+             <img 
+              src="/image/svgviewer-output (1).svg"
+              alt="Meowvrick Logo"
+              
+              className="w-50 h-50 hover:opacity-80 transition-opacity"
+            />
+          
         </Link>
 
         {/* Desktop Links */}
