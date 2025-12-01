@@ -219,6 +219,46 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   const markersRef = useRef<google.maps.Marker[]>([]);
   const catMarkersRef = useRef<Map<string, { marker: google.maps.Marker; lat: number; lng: number }>>(new Map());
 
+  /* ---------- ANIMATE MARKER MOVEMENT ---------- */
+  const animateMarkerMovement = (
+    marker: google.maps.Marker,
+    fromLat: number,
+    fromLng: number,
+    toLat: number,
+    toLng: number,
+    duration: number = 800
+  ) => {
+    const startTime = Date.now();
+    const startLat = fromLat;
+    const startLng = fromLng;
+    const deltaLat = toLat - startLat;
+    const deltaLng = toLng - startLng;
+
+    const easeInOutQuad = (t: number): number => {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    };
+
+    const animate = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = easeInOutQuad(progress);
+
+      const currentLat = startLat + deltaLat * easeProgress;
+      const currentLng = startLng + deltaLng * easeProgress;
+
+      marker.setPosition(new google.maps.LatLng(currentLat, currentLng));
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      } else {
+        // Ensure final position is exact
+        marker.setPosition(new google.maps.LatLng(toLat, toLng));
+      }
+    };
+
+    animate();
+  };
+
   // Debug: Log received props
   useEffect(() => {
     console.log("🗺️ MapWithCatsAndBuildings received props:");
@@ -305,11 +345,15 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
           let marker: google.maps.Marker;
           
           if (existingEntry) {
-            // Marker already exists - update position directly (no animation)
+            // Marker already exists - animate to new position
             marker = existingEntry.marker;
-            marker.setPosition(position);
+            const oldLat = existingEntry.lat;
+            const oldLng = existingEntry.lng;
             
-            console.log(`🐱 Updated ${cat.name} to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
+            // Animate the marker movement
+            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 800);
+            
+            console.log(`🐱 Animated ${cat.name} from (${oldLat.toFixed(4)}, ${oldLng.toFixed(4)}) to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
             
             // Update stored position
             catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
@@ -510,7 +554,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
             onCatClick?.(cat);
           });
 
-          markersRef.current.push(marker);
+          // NOTE: Don't push to markersRef - cat markers are managed separately in catMarkersRef
         } else {
           const b = item.data as Building;
           if (zoom < 16 && b.priority !== 1) return;
