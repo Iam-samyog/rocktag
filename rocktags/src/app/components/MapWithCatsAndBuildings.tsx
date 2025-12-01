@@ -211,39 +211,6 @@ const highlightText = (text: string): string => {
     .join("");
 };
 
-/* ---------- HELPER: Animate Marker Movement ---------- */
-const animateMarkerMovement = (
-  marker: google.maps.Marker,
-  startLat: number,
-  startLng: number,
-  endLat: number,
-  endLng: number,
-  duration: number = 800 // milliseconds
-) => {
-  const startTime = Date.now();
-  
-  const animate = () => {
-    const now = Date.now();
-    const progress = Math.min((now - startTime) / duration, 1);
-    
-    // Easing function for smooth animation (ease-in-out)
-    const easeProgress = progress < 0.5 
-      ? 2 * progress * progress 
-      : -1 + (4 - 2 * progress) * progress;
-    
-    const currentLat = startLat + (endLat - startLat) * easeProgress;
-    const currentLng = startLng + (endLng - startLng) * easeProgress;
-    
-    marker.setPosition({ lat: currentLat, lng: currentLng });
-    
-    if (progress < 1) {
-      requestAnimationFrame(animate);
-    }
-  };
-  
-  requestAnimationFrame(animate);
-};
-
 export default function MapWithEverything({ cats, buildings, onCatClick }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -338,15 +305,11 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
           let marker: google.maps.Marker;
           
           if (existingEntry) {
-            // Marker already exists - animate it to the new position
+            // Marker already exists - update position directly (no animation)
             marker = existingEntry.marker;
-            const oldLat = existingEntry.lat;
-            const oldLng = existingEntry.lng;
+            marker.setPosition(position);
             
-            console.log(`🐱 Animating ${cat.name} from (${oldLat.toFixed(4)}, ${oldLng.toFixed(4)}) to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
-            
-            // Animate the marker movement over 800ms
-            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 800);
+            console.log(`🐱 Updated ${cat.name} to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
             
             // Update stored position
             catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
