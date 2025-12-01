@@ -219,14 +219,14 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   const markersRef = useRef<google.maps.Marker[]>([]);
   const catMarkersRef = useRef<Map<string, { marker: google.maps.Marker; lat: number; lng: number }>>(new Map());
 
-  /* ---------- ANIMATE MARKER MOVEMENT ---------- */
+  /* ---------- ANIMATE MARKER MOVEMENT (FAST - 500ms) ---------- */
   const animateMarkerMovement = (
     marker: google.maps.Marker,
     fromLat: number,
     fromLng: number,
     toLat: number,
     toLng: number,
-    duration: number = 800
+    duration: number = 500
   ) => {
     const startTime = Date.now();
     const startLat = fromLat;
@@ -251,22 +251,12 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // Ensure final position is exact
         marker.setPosition(new google.maps.LatLng(toLat, toLng));
       }
     };
 
     animate();
   };
-
-  // Debug: Log received props
-  useEffect(() => {
-    console.log("🗺️ MapWithCatsAndBuildings received props:");
-    console.log("📍 Cats count:", cats.length);
-    console.log("📍 Cats data:", cats);
-    console.log("🏢 Buildings count:", buildings.length);
-    console.log("🏢 Buildings data:", buildings);
-  }, [cats, buildings]);
 
   /* ---------- INIT MAP ---------- */
   useEffect(() => {
@@ -293,12 +283,6 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   /* ---------- MARKERS ---------- */
   useEffect(() => {
     if (!map) return;
-    
-    console.log("🗺️ Creating markers:");
-    console.log("📍 Cats to display:", cats.length);
-    console.log("🏢 Buildings to display:", buildings.length);
-    
-    // Only clear building markers, not cat markers (they persist for animation)
     markersRef.current.forEach(m => m.setMap(null));
     markersRef.current = [];
 
@@ -307,16 +291,12 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ...buildings.map(b => ({ type: 'building' as const, data: b, key: `bld-${b.abbr}` }))
     ];
 
-    console.log("🗺️ Total items to place:", items.length);
-
     const groups = new Map<string, typeof items>();
     items.forEach(item => {
       const key = `${item.data.lat.toFixed(6)},${item.data.lng.toFixed(6)}`;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(item);
     });
-
-    console.log("🗺️ Grouped by location:", groups.size);
 
     const radiusMeters = 25;
     const earthRadius = 6371000;
@@ -338,7 +318,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
         if (item.type === 'cat') {
           const cat = item.data as Cat;
           const catKey = `cat-${cat.id}`;
-
+          
           // Check if marker already exists
           const existingEntry = catMarkersRef.current.get(catKey);
           
@@ -350,8 +330,8 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
             const oldLat = existingEntry.lat;
             const oldLng = existingEntry.lng;
             
-            // Animate the marker movement
-            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 800);
+            // Animate the marker movement (fast - 500ms)
+            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 500);
             
             console.log(`🐱 Animated ${cat.name} from (${oldLat.toFixed(4)}, ${oldLng.toFixed(4)}) to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
             
@@ -446,10 +426,10 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
     <div style="
       padding:14px 16px;
       font-family:'Poppins', 'Roboto', system-ui, -apple-system, sans-serif;
-      background:#D6C9C8;
+      background:#847570;
       border-radius:12px;
-      box-shadow:0 4px 16px rgba(78, 42, 23, 0.15);
-      border:2px solid #D6C9C8;
+      box-shadow:0 4px 16px rgba(132, 117, 112, 0.3);
+      border:2px solid #847570;
       min-width:200px;
       max-width:260px;
       font-size:14px;
@@ -458,7 +438,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       position: relative;
     ">
       <strong style="
-        color:#4E2A17;
+        color:#FFFCF4;
         font-size:17px;
         display:block;
         margin-bottom:4px;
@@ -467,12 +447,12 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ">${cat.name}</strong>
 
       <em style="
-        color:#4E2A17;
+        color:#FFFCF4;
         font-size:13px;
         display:block;
         margin-bottom:6px;
         white-space:normal;
-        background:rgba(78, 42, 23, 0.1);
+        background:rgba(255, 252, 244, 0.15);
         padding:3px 7px;
         border-radius:6px;
         display:inline-block;
@@ -480,7 +460,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ">${cat.color}</em>
 
       <span style="
-        color:#4E2A17;
+        color:#FFFCF4;
         font-size:12px;
         display:block;
         white-space:normal;
@@ -501,7 +481,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       height: 0;
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
-      border-top: 12px solid #D6C9C8;
+      border-top: 12px solid #847570;
     "></div>
   </div>
 `;
@@ -554,7 +534,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
             onCatClick?.(cat);
           });
 
-          // NOTE: Don't push to markersRef - cat markers are managed separately in catMarkersRef
+          markersRef.current.push(marker);
         } else {
           const b = item.data as Building;
           if (zoom < 16 && b.priority !== 1) return;
