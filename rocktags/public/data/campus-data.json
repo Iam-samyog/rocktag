@@ -16,9 +16,9 @@
       "bestTime": "Noon",
       "profileImage": "/image/catimage.jpg",
       "gallery": [
-        "/image/catimage.jpg",
-        "/image/catimage.jpg",
-        "/image/catimage.jpg",
+        "/image/cat1.jpg",
+        "/image/cat2.jpg",
+        "/image/cat3.jpg",
         "/image/catimage.jpg"
       ],
       "favoriteRubbingPlace": "Under the chin",
