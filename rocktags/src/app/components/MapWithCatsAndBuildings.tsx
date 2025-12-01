@@ -446,10 +446,10 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
     <div style="
       padding:14px 16px;
       font-family:'Poppins', 'Roboto', system-ui, -apple-system, sans-serif;
-      background:#847570;
+      background:#D6C9C8;
       border-radius:12px;
-      box-shadow:0 4px 16px rgba(132, 117, 112, 0.3);
-      border:2px solid #847570;
+      box-shadow:0 4px 16px rgba(78, 42, 23, 0.15);
+      border:2px solid #D6C9C8;
       min-width:200px;
       max-width:260px;
       font-size:14px;
@@ -458,7 +458,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       position: relative;
     ">
       <strong style="
-        color:#FFFCF4;
+        color:#4E2A17;
         font-size:17px;
         display:block;
         margin-bottom:4px;
@@ -467,12 +467,12 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ">${cat.name}</strong>
 
       <em style="
-        color:#FFFCF4;
+        color:#4E2A17;
         font-size:13px;
         display:block;
         margin-bottom:6px;
         white-space:normal;
-        background:rgba(255, 252, 244, 0.15);
+        background:rgba(78, 42, 23, 0.1);
         padding:3px 7px;
         border-radius:6px;
         display:inline-block;
@@ -480,7 +480,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       ">${cat.color}</em>
 
       <span style="
-        color:#FFFCF4;
+        color:#4E2A17;
         font-size:12px;
         display:block;
         white-space:normal;
@@ -501,7 +501,7 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
       height: 0;
       border-left: 10px solid transparent;
       border-right: 10px solid transparent;
-      border-top: 12px solid #847570;
+      border-top: 12px solid #D6C9C8;
     "></div>
   </div>
 `;
