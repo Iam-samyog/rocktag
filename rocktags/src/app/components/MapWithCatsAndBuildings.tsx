@@ -211,12 +211,46 @@ const highlightText = (text: string): string => {
     .join("");
 };
 
+/* ---------- HELPER: Animate Marker Movement ---------- */
+const animateMarkerMovement = (
+  marker: google.maps.Marker,
+  startLat: number,
+  startLng: number,
+  endLat: number,
+  endLng: number,
+  duration: number = 800 // milliseconds
+) => {
+  const startTime = Date.now();
+  
+  const animate = () => {
+    const now = Date.now();
+    const progress = Math.min((now - startTime) / duration, 1);
+    
+    // Easing function for smooth animation (ease-in-out)
+    const easeProgress = progress < 0.5 
+      ? 2 * progress * progress 
+      : -1 + (4 - 2 * progress) * progress;
+    
+    const currentLat = startLat + (endLat - startLat) * easeProgress;
+    const currentLng = startLng + (endLng - startLng) * easeProgress;
+    
+    marker.setPosition({ lat: currentLat, lng: currentLng });
+    
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+  };
+  
+  requestAnimationFrame(animate);
+};
+
 export default function MapWithEverything({ cats, buildings, onCatClick }: Props) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [zoom, setZoom] = useState(16);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  const catMarkersRef = useRef<Map<string, { marker: google.maps.Marker; lat: number; lng: number }>>(new Map());
 
   // Debug: Log received props
   useEffect(() => {
@@ -295,17 +329,44 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
 
         if (item.type === 'cat') {
           const cat = item.data as Cat;
+          const catKey = `cat-${cat.id}`;
 
-          const marker = new google.maps.Marker({
-            position,
-            map,
-            icon: {
-              url: `data:image/svg+xml;charset=UTF-8,${catSvg(cat.name)}`,
-              scaledSize: new google.maps.Size(50, 58),
-              anchor: new google.maps.Point(25, 58),
-            },
-            title: `${cat.name} – ${cat.activity}`,
-          });
+          // Check if marker already exists
+          const existingEntry = catMarkersRef.current.get(catKey);
+          
+          let marker: google.maps.Marker;
+          
+          if (existingEntry) {
+            // Marker already exists - animate it to the new position
+            marker = existingEntry.marker;
+            const oldLat = existingEntry.lat;
+            const oldLng = existingEntry.lng;
+            
+            console.log(`🐱 Animating ${cat.name} from (${oldLat.toFixed(4)}, ${oldLng.toFixed(4)}) to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
+            
+            // Animate the marker movement over 800ms
+            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 800);
+            
+            // Update stored position
+            catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
+          } else {
+            // Create new marker
+            marker = new google.maps.Marker({
+              position,
+              map,
+              icon: {
+                url: `data:image/svg+xml;charset=UTF-8,${catSvg(cat.name)}`,
+                scaledSize: new google.maps.Size(50, 58),
+                anchor: new google.maps.Point(25, 58),
+              },
+              title: `${cat.name} – ${cat.activity}`,
+            });
+            
+            console.log(`✨ Created new marker for ${cat.name}`);
+            
+            // Store marker and position
+            catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
+          }
 
           // Build info window HTML with custom tail
           const activityHTML = highlightText(cat.activity);
