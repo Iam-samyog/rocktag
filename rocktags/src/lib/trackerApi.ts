@@ -230,23 +230,27 @@ async function fetchTrackerLocationsOnce(
     
     // Validate each location is within UTA bounds
     const validatedData: TrackerResponse = {};
+    let hasOutOfBoundsLocations = false;
     
     Object.entries(data).forEach(([catName, location]) => {
       const trackerLoc = location as TrackerLocation;
       
       if (isWithinUTABounds(trackerLoc.latitude, trackerLoc.longitude)) {
         validatedData[catName] = trackerLoc;
-        console.log(`✅ ${catName} location valid and within UTA bounds`);
+        console.log(`✅ ${catName} location valid: (${trackerLoc.latitude}, ${trackerLoc.longitude})`);
       } else {
+        hasOutOfBoundsLocations = true;
         console.warn(
-          `⚠️ ${catName} location out of bounds (${trackerLoc.latitude}, ${trackerLoc.longitude}) - using static position`
+          `⚠️ ${catName} is OUT OF BOUNDS (${trackerLoc.latitude}, ${trackerLoc.longitude}) - using static position`
         );
-        // Location is out of bounds, don't include it - static position will be used
       }
     });
     
-    if (Object.keys(validatedData).length === 0) {
-      console.warn("⚠️ No valid tracker locations - backend may be down or sending invalid data. Using static cat positions");
+    // Only log if we have completely empty response from backend
+    if (Object.keys(data).length === 0) {
+      console.warn("⚠️ Backend is DOWN - no tracker data received. Using static cat positions");
+    } else if (Object.keys(validatedData).length === 0 && hasOutOfBoundsLocations) {
+      console.warn("⚠️ All tracker locations are OUT OF BOUNDS - using static cat positions");
     }
     
     return validatedData;
