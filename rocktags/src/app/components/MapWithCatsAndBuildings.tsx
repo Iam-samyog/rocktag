@@ -217,46 +217,6 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
   const [selectedCat, setSelectedCat] = useState<Cat | null>(null);
   const [zoom, setZoom] = useState(16);
   const markersRef = useRef<google.maps.Marker[]>([]);
-  const catMarkersRef = useRef<Map<string, { marker: google.maps.Marker; lat: number; lng: number }>>(new Map());
-
-  /* ---------- ANIMATE MARKER MOVEMENT (FAST - 500ms) ---------- */
-  const animateMarkerMovement = (
-    marker: google.maps.Marker,
-    fromLat: number,
-    fromLng: number,
-    toLat: number,
-    toLng: number,
-    duration: number = 500
-  ) => {
-    const startTime = Date.now();
-    const startLat = fromLat;
-    const startLng = fromLng;
-    const deltaLat = toLat - startLat;
-    const deltaLng = toLng - startLng;
-
-    const easeInOutQuad = (t: number): number => {
-      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-    };
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const easeProgress = easeInOutQuad(progress);
-
-      const currentLat = startLat + deltaLat * easeProgress;
-      const currentLng = startLng + deltaLng * easeProgress;
-
-      marker.setPosition(new google.maps.LatLng(currentLat, currentLng));
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        marker.setPosition(new google.maps.LatLng(toLat, toLng));
-      }
-    };
-
-    animate();
-  };
 
   /* ---------- INIT MAP ---------- */
   useEffect(() => {
@@ -317,44 +277,17 @@ export default function MapWithEverything({ cats, buildings, onCatClick }: Props
 
         if (item.type === 'cat') {
           const cat = item.data as Cat;
-          const catKey = `cat-${cat.id}`;
-          
-          // Check if marker already exists
-          const existingEntry = catMarkersRef.current.get(catKey);
-          
-          let marker: google.maps.Marker;
-          
-          if (existingEntry) {
-            // Marker already exists - animate to new position
-            marker = existingEntry.marker;
-            const oldLat = existingEntry.lat;
-            const oldLng = existingEntry.lng;
-            
-            // Animate the marker movement (fast - 500ms)
-            animateMarkerMovement(marker, oldLat, oldLng, position.lat, position.lng, 500);
-            
-            console.log(`🐱 Animated ${cat.name} from (${oldLat.toFixed(4)}, ${oldLng.toFixed(4)}) to (${position.lat.toFixed(4)}, ${position.lng.toFixed(4)})`);
-            
-            // Update stored position
-            catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
-          } else {
-            // Create new marker
-            marker = new google.maps.Marker({
-              position,
-              map,
-              icon: {
-                url: `data:image/svg+xml;charset=UTF-8,${catSvg(cat.name)}`,
-                scaledSize: new google.maps.Size(50, 58),
-                anchor: new google.maps.Point(25, 58),
-              },
-              title: `${cat.name} – ${cat.activity}`,
-            });
-            
-            console.log(`✨ Created new marker for ${cat.name}`);
-            
-            // Store marker and position
-            catMarkersRef.current.set(catKey, { marker, lat: position.lat, lng: position.lng });
-          }
+
+          const marker = new google.maps.Marker({
+            position,
+            map,
+            icon: {
+              url: `data:image/svg+xml;charset=UTF-8,${catSvg(cat.name)}`,
+              scaledSize: new google.maps.Size(50, 58),
+              anchor: new google.maps.Point(25, 58),
+            },
+            title: `${cat.name} – ${cat.activity}`,
+          });
 
           // Build info window HTML with custom tail
           const activityHTML = highlightText(cat.activity);
