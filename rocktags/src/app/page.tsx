@@ -2,7 +2,6 @@
 
 
 import { HeroCarousel } from "@/app/components/Landing_page_components/HeroCarousel";
-import { InfoSection } from "@/app/components/Landing_page_components/InfoSection";
 import { HowToUse } from "@/app/components/Landing_page_components/HowToUse";
 import { Footer } from "@/app/components/Landing_page_components/Footer";
 import {Navbar} from "@/app/components/Landing_page_components/Navbar";
@@ -23,8 +22,11 @@ export default function Home() {
 
       <Navbar />
       <HeroCarousel />
-      <InfoSection />
+
+    <div className="my-5">
       <HowToUse />
+    </div>
+      
       <Footer />
     </div>
   );

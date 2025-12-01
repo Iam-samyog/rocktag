@@ -84,14 +84,14 @@ function StepCard({ step }: StepCardProps) {
 export function HowToUse() {
   return (
     <section
-      className="py-16 bg-[#847570] px-4 bg-gradient-to-b from-transparent to-white/5"
+      className="py-16  px-4 bg-gradient-to-b from-transparent to-white/5"
       aria-labelledby="how-to-use-heading"
     >
       <div className="max-w-[1100px] mx-auto">
         <header className="text-center mb-14">
           <h2
             id="how-to-use-heading"
-            className="text-4xl sm:text-5xl font-bold font-heading !text-[#E2C3A7] mb-5 tracking-tight"
+            className="text-4xl sm:text-5xl font-bold font-heading  mb-5 tracking-tight"
           >
             How to Use Meowvrick
           </h2>
